@@ -1,0 +1,27 @@
+--- explore mode commands ---
+1. <%> -> create file
+2. <d> -> create directory
+
+--- normal mode commands ---
+
+leader = " "
+
+1. (remapped) "<leader>pv" -> explore: goes back to browsing files
+2.                       k -> go one line up   (also, you can write a number and press j and it will jump that number of lines up)
+3.                       j -> go one line down (also, you can write a number and press k and it will jump that number of lines down)
+4.                       I -> start insert mode at the beginning of the line
+5.                       A -> start insert mode at the end of the line
+6.                       $ -> go to the end of the line
+
+--- plugins ---
+
+- the package manager I use is called "Lazy" (for lazy loading)
+- to open the manager, write the normal mode command: ":Lazy"
+- it is possible to see all the loaded and installed plugins
+- refer to /lua/config/lazy.lua for the configuration
+
+--- notes ---
+
+- any directory in the /lua directory can be required by lua (put it there if you need to require it somewhere)
+- /lua/config I have decided to put the personal configs
+- /lua/plugins is where the plugins I want are defined, please check the "plugins" sections higher
