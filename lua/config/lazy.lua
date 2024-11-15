@@ -33,7 +33,7 @@ vim.g.maplocalleader = "\\"
 local setup_params = {
   spec = {
     -- import from /plugins directory
-    { import = 'plugins' },
+    { import = 'plugin' },
   },
   -- use borealis colorscheme when opening the package manager window
   install = { colorscheme = { 'borealis' } },
