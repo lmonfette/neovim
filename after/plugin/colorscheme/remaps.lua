@@ -1,0 +1,1 @@
+-- remaps for colorscheme
