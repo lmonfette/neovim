@@ -39,13 +39,15 @@ mason_lspconfig.setup({
 		package_to_lspconfig['powershell-editor-services'],
 		package_to_lspconfig['python-lsp-server'],
 		package_to_lspconfig['rust-analyzer'],
+		package_to_lspconfig['rust_hdl'],
 		package_to_lspconfig['sqls'],
 		package_to_lspconfig['typescript-language-server'],
+		package_to_lspconfig['verible'],
 		package_to_lspconfig['vim-language-server'],
 		package_to_lspconfig['vue-language-server'],
 		package_to_lspconfig['yaml-language-server'],
 	},
-	automatic_installation = true,
+	automatic_installation = false,
 	handlers = {
 		function(server_name)
 			local setup_params = {}
@@ -67,7 +69,7 @@ mason_lspconfig.setup({
 
 local package_to_nvim_dap = require('mason-nvim-dap.mappings.source').package_to_nvim_dap
 
-if package_to_lspconfig['cortex-debug'] ~= nil then
+if package_to_nvim_dap['cortex-debug'] ~= nil then
 	print('PLEASE ADD cortex-debug TO DAP\'s automatically loaded')
 end
 
@@ -86,10 +88,96 @@ mason_dap.setup({
 		package_to_nvim_dap['js-debug-adapter'],
 		package_to_nvim_dap['php-debug-adapter'],
 	},
-	automatic_installation = true,
+	automatic_installation = false,
+	handlers = {
+		function(dap_name)
+			require('mason-nvim-dap').default_setup(dap_name)
+		end,
+	},
 })
 
+local linters = {
+	'ast-grep',
+	'checkmake',
+	'cmakelint',
+	'codespell',
+	'cpplint',
+	'dcm',
+	'detekt',
+	'eslint_d',
+	'flakeheaven',
+	'gdtoolkit',
+	'gitleaks',
+	'golangci-lint',
+	'htmlhint',
+	'hadolint',
+	'jsonlint',
+	-- 'luacheck',
+	'markdownlint',
+	'phpcs',
+	'protolint',
+	'shellcheck',
+	'snyk',
+	'sqlfluff',
+	'swiftlint',
+	'tflint',
+	'vale',
+	'vint',
+	'verible',
+	'yamllint',
+}
+
+print("YOLO")
+
+mason_linter.setup({
+	ensure_installed = {
+		'ast-grep',
+		'checkmake',
+	},
+	automatic_installation = true,
+	handlers = {
+		function(linter_name)
+			print('installing ' .. linter_name .. ' linter ...')
+			-- require('lint')[linter_name].setup({})
+		end,
+	}
+})
+
+require('lint').linters_by_ft = {
+  c = {'cpplint'},
+  cpp = {'cpplint'},
+}
+
+vim.api.nvim_create_autocmd('BufWritePost',{
+	desc = 'On buffer write post',
+	callback = function()
+
+    -- try_lint without arguments runs the linters defined in `linters_by_ft`
+    -- for the current filetype
+    require("lint").try_lint()
+
+    -- You can call `try_lint` with a linter name or a list of names to always
+    -- run specific linters, independent of the `linters_by_ft` configuration
+	-- require("lint").try_lint("cspell")
+  	end
+})
+
+print("salut")
+
+local formatters = {	
+}
 
 -- vim.cmd.MasonInstall('cortex-debug')	-- BUG: somehow this has to be installed from mason directly
+-- vim.cmd.MasonUpdate()
+--
+-- Show linters for the current buffer's file type
+vim.api.nvim_create_user_command("LintInfo", function()
+  local filetype = vim.bo.filetype
+  local current_linters = require("lint").linters_by_ft[filetype]
 
-vim.cmd.MasonUpdate()
+  if current_linters then
+    print("Linters for " .. filetype .. ": " .. table.concat(current_linters, ", "))
+  else
+    print("No linters configured for filetype: " .. filetype)
+  end
+end, {})
