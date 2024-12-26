@@ -1,0 +1,57 @@
+run:
+  # Timeout for the entire linter run
+  timeout: 5m
+
+linters:
+  enable:
+    - errcheck          # Check that errors are checked
+    - gosimple          # Linter for code simplifications
+    - govet             # Vet Go source code
+    - staticcheck       # Go static analysis
+    - unused            # Checks for unused variables/functions/constants
+    - ineffassign       # Detects ineffectual assignments
+    - gocyclo           # Checks for high cyclomatic complexity
+    - gofmt             # Checks formatting
+    - misspell          # Detects misspelled words
+    - revive            # Modern and customizable linter for Go
+
+  disable:
+    - typecheck         # Disables checking for type issues (if necessary)
+
+linters-settings:
+  gocyclo:
+    min-complexity: 15   # Sets the threshold for cyclomatic complexity
+
+  misspell:
+    locale: US           # Spell-check using American English
+
+  revive:
+    severity: warning    # Set severity level for revive rules
+
+issues:
+  max-issues-per-linter: 50
+  max-same-issues: 3
+  exclude-use-default: false
+
+  # Exclude patterns
+  exclude:
+    - "should have comment or be unexported"  # Ignore comments for unexported code
+    # - "Error return value of .* is not checked"  # Ignore unchecked errors
+    # - "cyclomatic complexity .* is high"  # Ignore high cyclomatic complexity warnings
+
+  exclude-dirs:
+    - vendor
+
+  exclude-files:
+    - .*_test.go
+
+output:
+  formats: 
+    - format: 'colored-line-number'
+  sort-results: true
+  sort-order:
+    - linter
+    - severity
+    - file # filepath, line, and column.
+  print-issued-lines: true
+  print-linter-name: true

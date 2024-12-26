@@ -1,3 +1,4 @@
+print('after/plugin/colorscheme')
 function ColorTheCode(colorscheme)
 	colorscheme = colorscheme or 'horizon-extended'
 

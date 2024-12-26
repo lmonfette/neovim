@@ -1,0 +1,68 @@
+1. press CTRL-O to go into Insert-Normal mode --(insert) --
+
+---- first steps in vim -----
+
+2.1 - Running Vim for the First Time
+2.2 - Inserting text
+2.3 - Moving around
+2.4 - Deleting characters (x, r)
+2.5 - Undo and Redo
+2.6 - Other editing commands (o, a)
+2.7 - Getting out
+2.8 - Finding help
+
+---- moving around ----
+
+3.1	Word movement                           -- (w, e, b, ge)
+3.2	Moving to the start or end of a line    -- (0, $, ^, _)
+3.3	Moving to a character                   -- (f<char>, F<char>, ;, ",")
+3.4	Matching a parensis                     -- (%)
+3.5	Moving to a specific line               -- (<line_number>G, <file_percentage>%, H, M, L)
+3.6	Telling where you are                   -- (ruler option = true)
+3.7	Scrolling around                        -- (CTRL-U, CTRL-D, CTRL-E, CTRL-Y, CTRL-F, CTRL-B, zz)
+3.8	Simple searches                         -- (/ and ?, ignorecase, *, #, \<word\>, :noh, g*, g#)
+3.9	Simple search patterns                  -- (^, $, .)
+3.10	Using marks                             -- (<C-]>, <C-O>,<C-I, <Tab>)
+extra 	Recording commands			-- (q<letter>, @<letter>)
+
+---- making small changes ----
+
+4.1	Operators and motions                   -- (<number> <operator> <number> <motion>, ex: 2dx (delete 1 word, 2 times), d4w (delete 4 words), 4x)
+4.2	Changing text                           -- (c, ce, cw, r, x, X, D, C, s, S)
+4.3	Repeating a change                      -- (.)
+4.4	Visual mode                             -- (v, V, <C-v>, o, O)
+4.5	Moving text                             -- (p, P)
+4.6	Copying text                            -- (yw, ye, yb, yy, Y)
+4.7	Using the clipboard                     -- ("*yy, "*p)
+4.8	Text objects                            -- (diw, daw, ciw, caw, cis, cas)
+4.9	Replace mode                            -- (R)
+4.10	Conclusion                              -- (~, I, A)
+
+---- set your settings ----
+
+5.1	The vimrc file				--
+5.2	Example vimrc contents			--
+5.3	Simple mappings				--
+5.4	Adding a package			--
+5.5	Adding a plugin				--
+5.6	Adding a help file			--
+5.7	The option window			-- (:options)
+5.8	Often used options			--
+
+---- using syntax highlighting ----
+
+6.1	Switching it on				-- 
+6.2	No or wrong colors?			-- 
+6.3	Different colors			-- 
+6.4	With colors or without colors		-- 
+6.5	Further reading				-- 
+
+---- editing more than one file ----
+
+7.1	Edit another file			-- (:edit filename.txt)
+7.2	A list of files				-- (nvim one.c two.c three.c, :<number>next, :w<number>next, :previous, :wprevious, :first, :wfirst, :last, :wlast)
+7.3	Jumping from file to file		-- (:args one.c two.c three.c, <C-^>)
+7.4	Backup files				-- (
+7.5	Copy text between files			-- 
+7.6	Viewing a file				-- 
+7.7	Changing the file name			-- 

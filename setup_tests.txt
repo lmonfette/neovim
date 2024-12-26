@@ -1,0 +1,32 @@
+---------- INTRODUCTION ----------
+
+1. My neovim setup needs to be testable to make sure it works and if available on first build on all computers.
+2. The tests may be done manually through a list, but optimally, it should all be automatically testable.
+
+---------- TESTS ----------
+
+- 01_test_utils_package
+- 02_lazy_is_installed
+- 03_horizon_extended_colorscheme_installed (file to check each color is appropriate?)
+- 04_mason_installed
+    - 04_01_test_options
+    - 04_02_test_remaps
+- 05_lsp_config_working
+    - 05_01_test_options
+    - 05_02_test_remaps
+    - 05_03_lsps_installed
+    - 05_04_daps_installed
+    - 05_05_linters_installed
+    - 05_06_formatters_installed
+- 06_telescope_installed
+    - 06_01_test_options
+    - 06_02_test_remaps
+- 07_nvim_tree_installed
+    - 07_01_test_options
+    - 07_02_test_remaps
+- 08_treesitter_installed
+    - 08_01_test_options
+    - 08_02_test_remaps
+- 09_undo_tree_installed
+    - 09_01_test_options
+    - 09_02_test_remaps

@@ -16,7 +16,6 @@ if not lazy_fs_stat then
   end
 end
 
--- 
 vim.opt.rtp:prepend(lazy_path)
 
 -- Make sure to setup `mapleader` and `maplocalleader` before
@@ -33,10 +32,10 @@ vim.g.maplocalleader = "\\"
 local setup_params = {
   spec = {
     -- import from /plugins directory
-    { import = 'plugin' },
+    { import = 'plugins' },
   },
   -- use borealis colorscheme when opening the package manager window
-  install = { colorscheme = { 'borealis' } },
+  install = { colorscheme = { 'extended-horizon' } },
   -- automatically check for plugin updates
   checker = { enabled = true },
 }
