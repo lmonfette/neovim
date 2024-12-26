@@ -15,21 +15,21 @@ local package_to_nvimlint = require('mason-nvim-lint.mapping').package_to_nvimli
 local formatter = require('formatter')
 local formatter_util = require "formatter.util"
 
-local function mason_lsp_to_nvim_lsp(package_list)
+local function mason_lsps_to_nvim_lsps(package_list)
     local package_list_length = #package_list
     local nvim_package_list = {}
 
     for i = 1, package_list_length do
-        table.insert(package_to_lspconfig[package_list[i]], nvim_package_list)
+        table.insert(nvim_package_list, package_to_lspconfig[package_list[i]])
     end
 end
 
-local function mason_dap_to_nvim_dap(package_list)
+local function mason_daps_to_nvim_daps(package_list)
     local package_list_length = #package_list
     local nvim_package_list = {}
 
     for i = 1, package_list_length do
-        table.insert(package_to_nvim_dap[package_list[i]], nvim_package_list)
+        table.insert(nvim_package_list, package_to_nvim_dap[package_list[i]])
     end
 end
 
@@ -38,81 +38,159 @@ local function mason_linters_to_nvim_linters(package_list)
     local nvim_package_list = {}
 
     for i = 1, package_list_length do
-        table.insert(package_to_nvimlint[package_list[i]], nvim_package_list)
+        table.insert(nvim_package_list, package_to_nvimlint[package_list[i]])
     end
 end
 
 local mason_config = {
     mason_lsps = {
+        -- a
         'ansible-language-server',
         'arduino-language-server',
+        -- b
         'bash-language-server',
         -- 'buf-language-server', -- BUG: add back later, waiting for an update on mason-lspconfig's side
+        -- c
         'clangd',
         'cmake-language-server',
         'css-lsp',
+        -- d
         'docker-compose-language-service',
         'dockerfile-language-server',
+        -- e
         'eslint-lsp',
+        -- f
+        -- g
         'glsl_analyzer',
         'gopls',
+        -- h
         'helml',
         'html-lsp',
+        -- i
+        -- j
         'jdtls',
         'json-lsp',
+        -- k
+        -- l
         'lua-language-server',
+        -- m
         'marksman',
         'matlab-language-server',
+        -- n
         'nginx-language-server',
+        -- o
+        -- p
         'powershell-editor-services',
         'python-lsp-server',
+        -- q
+        -- r
         'rust-analyzer',
         'rust_hdl',
+        -- s
         'sqls',
+        -- t
         'typescript-language-server',
+        -- u
+        -- v
         'verible',
         'vim-language-server',
         'vue-language-server',
+        -- w
+        -- x
+        -- y
         'yaml-language-server',
+        -- z
     },
     nvim_lsps = {},
     mason_daps = {
+        -- a
+        -- b
         'bash-debug-adapter',
+        -- c
         'chrome-debug-adapter',
         'codelldb',
         -- 'cortex-debug',              -- BUG: commenting this because it has somehow got to be installed manually with mason
         'cpptools',
+        -- d
         'debugpy',
         'delve',
+        -- e
+        -- f
+        -- g
+        -- h
+        -- i
+        -- j
         'java-debug-adapter',
         'java-test',
         'js-debug-adapter',
+        -- k
+        -- l
+        -- m
+        -- n
+        -- o
+        -- p
         'php-debug-adapter'
+        -- q
+        -- r
+        -- s
+        -- t
+        -- u
+        -- v
+        -- w
+        -- x
+        -- y
+        -- z
     },
     nvim_daps = {},
     mason_linters = {
+        -- a
         'ansible-lint',
+        -- b
+        -- c
         'checkmake',
         'cmakelint',
         'codespell',
         'cpplint',
+        -- d
+        -- e
         'eslint_d',
+        -- f
         'flake8',
+        -- g
         'gdtoolkit',
         'golangci-lint',
+        -- h
         'htmlhint',
         'hadolint',
+        -- i
+        -- j
         'jsonlint',
+        -- k
+        -- l
         'luacheck',
+        -- m
         'markdownlint',
+        -- n
+        -- o
+        -- p
         'phpcs',
         'protolint',
+        -- q
+        -- r
+        -- s
         'shellcheck',
         'sqlfluff',
+        -- t
         'tflint',
+        -- u
+        -- v
         'vale',
         'vint',
+        -- w
+        -- x
+        -- y
         'yamllint'
+        -- z
     },
     nvim_linters = {},
     linters_by_ft = {
@@ -178,12 +256,12 @@ local function setup_lsps()
     end
     -- configure the LSPs (language server protocol)
     mason_lspconfig.setup({
-        ensure_installed = mason_config.mason_linters,
+        ensure_installed = mason_config.nvim_lsps,
         automatic_installation = false,
         handlers = {
             function(server_name)
                 local setup_params = {}
-                if server_name == 'lua-language-server' then
+                if server_name == package_to_lspconfig['lua-language-server'] then
                     setup_params = {
                         settings = {
                             Lua = {
@@ -194,7 +272,7 @@ local function setup_lsps()
                         }
                     }
                 end
-                require('lspconfig')[package_to_lspconfig[server_name]].setup(setup_params)
+                require('lspconfig')[server_name].setup(setup_params)
             end,
         },
     })
@@ -205,6 +283,8 @@ local function setup_daps()
     if package_to_nvim_dap['cortex-debug'] ~= nil then
         print('PLEASE ADD cortex-debug TO DAP\'s automatically loaded')
     end
+
+    -- TODO: test daps by running code
 
     -- configure the DAPs (debug adapter protocol)
     mason_dap.setup({
@@ -224,6 +304,7 @@ local function setup_linters()
         automatic_installation = false,
     })
 
+    -- TODO: make templates for all important language configurations
     nvim_lint.linters_by_ft = mason_config.linters_by_ft
 
     for linter_by_ft_name, _ in pairs(nvim_lint.linters_by_ft) do
@@ -329,8 +410,8 @@ local function init ()
     -- install dependencies
     utils.ensure_installed('luarocks', 'luarocks') -- make sure luarocks is installed
     -- convert the packages to nvim compatible names
-    mason_config.nvim_lsps = mason_lsp_to_nvim_lsp(mason_config.mason_linters)
-    mason_config.nvim_daps = mason_dap_to_nvim_dap(mason_config.mason_daps)
+    mason_config.nvim_lsps = mason_lsps_to_nvim_lsps(mason_config.mason_linters)
+    mason_config.nvim_daps = mason_daps_to_nvim_daps(mason_config.mason_daps)
     mason_config.nvim_linters = mason_linters_to_nvim_linters(mason_config.mason_linters)
     -- setup mason package manager
     mason.setup({})
