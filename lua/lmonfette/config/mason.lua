@@ -5,6 +5,7 @@ local logging = require('lmonfette/logging')
 -- lsps
 local mason_lspconfig = require('mason-lspconfig')
 local package_to_lspconfig = require('mason-lspconfig.mappings.server').package_to_lspconfig
+local lspconfig_to_package = require('mason-lspconfig.mappings.server').lspconfig_to_package
 -- daps
 local mason_dap = require('mason-nvim-dap')
 local package_to_nvim_dap = require('mason-nvim-dap.mappings.source').package_to_nvim_dap
@@ -23,6 +24,7 @@ local function mason_lsps_to_nvim_lsps(package_list)
     for i = 1, package_list_length do
         table.insert(nvim_package_list, package_to_lspconfig[package_list[i]])
     end
+    return nvim_package_list
 end
 
 local function mason_daps_to_nvim_daps(package_list)
@@ -32,6 +34,7 @@ local function mason_daps_to_nvim_daps(package_list)
     for i = 1, package_list_length do
         table.insert(nvim_package_list, package_to_nvim_dap[package_list[i]])
     end
+    return nvim_package_list
 end
 
 local function mason_linters_to_nvim_linters(package_list)
@@ -41,6 +44,7 @@ local function mason_linters_to_nvim_linters(package_list)
     for i = 1, package_list_length do
         table.insert(nvim_package_list, package_to_nvimlint[package_list[i]])
     end
+    return nvim_package_list
 end
 
 local mason_config = {
@@ -65,7 +69,7 @@ local mason_config = {
         'glsl_analyzer',
         'gopls',
         -- h
-        'helml',
+        'helm-ls',
         'html-lsp',
         -- i
         -- j
@@ -102,7 +106,7 @@ local mason_config = {
         'yaml-language-server',
         -- z
     },
-    nvim_lsps = {},
+    nvim_lsps = {}, -- defined in setup function
     mason_daps = {
         -- a
         -- b
@@ -142,7 +146,7 @@ local mason_config = {
         -- y
         -- z
     },
-    nvim_daps = {},
+    nvim_daps = {}, -- defined in setup function
     mason_linters = {
         -- a
         'ansible-lint',
@@ -193,7 +197,7 @@ local mason_config = {
         'yamllint'
         -- z
     },
-    nvim_linters = {},
+    nvim_linters = {}, -- defined in setup function
     linters_by_ft = {
         -- a
         -- b
@@ -255,6 +259,7 @@ local function setup_lsps()
     if package_to_lspconfig['buf-language-server'] == 'buf_ls' then
         logging.error('PLEASE PUT buf-language-server BACK IN ensure_installed')
     end
+
     -- configure the LSPs (language server protocol)
     mason_lspconfig.setup({
         ensure_installed = mason_config.nvim_lsps,
@@ -262,7 +267,7 @@ local function setup_lsps()
         handlers = {
             function(server_name)
                 local setup_params = {}
-                if server_name == package_to_lspconfig['lua-language-server'] then
+                if lspconfig_to_package[server_name] == 'lua-language-server' then
                     setup_params = {
                         settings = {
                             Lua = {
@@ -289,7 +294,7 @@ local function setup_daps()
 
     -- configure the DAPs (debug adapter protocol)
     mason_dap.setup({
-        ensure_installed = mason_config.mason_daps,
+        ensure_installed = mason_config.nvim_daps,
         automatic_installation = false,
         handlers = {
             function(dap_name)
@@ -408,7 +413,7 @@ local function init ()
     -- install dependencies
     utils.ensure_installed('luarocks', 'luarocks') -- make sure luarocks is installed
     -- convert the packages to nvim compatible names
-    mason_config.nvim_lsps = mason_lsps_to_nvim_lsps(mason_config.mason_linters)
+    mason_config.nvim_lsps = mason_lsps_to_nvim_lsps(mason_config.mason_lsps)
     mason_config.nvim_daps = mason_daps_to_nvim_daps(mason_config.mason_daps)
     mason_config.nvim_linters = mason_linters_to_nvim_linters(mason_config.mason_linters)
     -- setup mason package manager
