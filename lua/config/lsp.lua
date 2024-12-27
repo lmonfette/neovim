@@ -1,13 +1,6 @@
 -- lspzero config
 local lsp_config = {}
 
--- options
-
-local function set_options()
-    -- Reserve a space in the gutter
-    vim.opt.signcolumn = 'yes'
-end
-
 local function init()
 
     -- This should be executed before you configure any language server
@@ -82,10 +75,18 @@ local function init()
     print('DONE INIT LSP')
 end
 
+local function set_options()
+    -- Reserve a space in the gutter
+    vim.opt.signcolumn = 'yes'
+end
+
+local function set_remaps()
+end
 
 function lsp_config.setup()
     init()
     set_options()
+    set_remaps()
 end
 
 return lsp_config

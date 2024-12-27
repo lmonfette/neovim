@@ -54,4 +54,4 @@ vim.o.softtabstop       = 4     -- a backspace removes up to 4 spaces
 vim.o.expandtab         = true  -- convert tabs to spaces
 
 -- setup package manager
-require('config/lazy')
+require('lmonfette/package_manager')

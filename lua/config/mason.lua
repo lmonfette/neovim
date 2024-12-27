@@ -403,9 +403,6 @@ local function setup_formatters()
     }
 end
 
-local function set_options()
-end
-
 local function init ()
     -- install dependencies
     utils.ensure_installed('luarocks', 'luarocks') -- make sure luarocks is installed
@@ -422,9 +419,17 @@ local function init ()
     setup_formatters()
 end
 
+local function set_options()
+end
+
+local function set_remaps()
+    vim.keymap.set('n', '<leader>mm', vim.cmd.Mason)
+end
+
 function mason_config.setup()
     init()
     set_options()
+    set_remaps()
 end
 
 -- vim.cmd.MasonInstall('cortex-debug') -- BUG: somehow this has to be installed from mason directly

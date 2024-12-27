@@ -1,5 +1,5 @@
 print('init.lua')
-require("config")
+require("lmonfette")
 print('after config')
 require("tests")
 print('after tests')
