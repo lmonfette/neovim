@@ -1,4 +1,4 @@
-local logging = require('logging')
+local logging = require('lmonfette/logging')
 
 local utils_module = {}
 
@@ -15,7 +15,7 @@ function utils_module.ensure_installed(tool, brew_name)
     end
 end
 
-local state = require('state')
+local state = require('lmonfette/state')
 
 function utils_module.set_logging_config(log_level, logging_active)
     state.log_level = log_level

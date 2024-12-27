@@ -1,5 +1,5 @@
 -- setup plugin manager (lazy)
-local logging = require('logging')
+local logging = require('lmonfette/logging')
 logging.debug('lua/lmonfette/package_manager.lua')
 
 local lazy_path = vim.fn.stdpath('data') .. '/lazy/lazy.nvim' -- get the path where to copy lazy's repo
@@ -34,9 +34,9 @@ vim.g.maplocalleader = "\\"
 local setup_params = {
   spec = {
     -- import from /plugins directory
-    { import = 'plugins' },
+    { import = 'lmonfette/plugins' },
   },
-  -- use borealis colorscheme when opening the package manager window
+  -- use extended-horizon colorscheme when opening the package manager window
   install = { colorscheme = { 'extended-horizon' } },
   -- automatically check for plugin updates
   checker = { enabled = true },

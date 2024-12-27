@@ -86,7 +86,7 @@ local treesitter_config = {
 
 local function init()
     nvim_ts_configs.setup {
-        -- A list of parser names, or "all" (the listed parsers MUST always be installed)
+        -- A list of parser names, or 'all' (the listed parsers MUST always be installed)
         ensure_installed = treesitter_config.languages,
         -- Install parsers synchronously (only applied to `ensure_installed`)
         sync_install = true,

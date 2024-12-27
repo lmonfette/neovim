@@ -1,4 +1,4 @@
-local logging = require('logging')
+local logging = require('lmonfette/logging')
 logging.debug('lua/lmonfette/init.lua')
 
 -- setup remaps
@@ -49,6 +49,3 @@ vim.o.tabstop           = 4     -- a tab creates up to 4 spaces
 vim.o.shiftwidth        = 4     -- a tab is the size of 4 spaces for auto indent
 vim.o.softtabstop       = 4     -- a backspace removes up to 4 spaces
 vim.o.expandtab         = true  -- convert tabs to spaces
-
--- setup package manager
-require('lmonfette/package_manager')

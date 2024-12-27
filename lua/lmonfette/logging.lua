@@ -2,7 +2,7 @@
 
 local logging = {}
 
-local state = require('state')
+local state = require('lmonfette/state')
 
 logging.notify_opts = { title = 'lmonfette'}
 

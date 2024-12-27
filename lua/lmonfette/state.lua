@@ -1,5 +1,5 @@
 local state = {
-    logging_active = false,
+    logging_active = true,
     log_level = vim.log.levels.INFO
 }
 

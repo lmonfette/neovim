@@ -1,7 +1,7 @@
 -- setup lazy
-local logging = require('logging')
+local logging = require('lmonfette/logging')
 logging.debug('after/plugin/lazy.lua')
 
-local lazy_config = require('config/lazy')
+local lazy_config = require('lmonfette/config/lazy')
 
 lazy_config.setup()

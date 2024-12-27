@@ -1,10 +1,14 @@
--- local utils = require('utils')
-local logging = require('logging')
+local utils = require('lmonfette/utils')
+local logging = require('lmonfette/logging')
 
--- utils.set_logging_config(vim.log.levels.DEBUG, true)
+utils.set_logging_config(vim.log.levels.DEBUG, true)
 
 logging.debug('init.lua')
+-- base setup
 require("lmonfette")
-require("tests")
+-- setup package manager
+require('lmonfette/package_manager')
+-- run tests
+require("lmonfette/tests")
 
 -- add plugin "mg979/vim-visual-multi"

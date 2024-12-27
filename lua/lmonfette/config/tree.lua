@@ -8,17 +8,17 @@ local function init()
 
     local function my_on_attach(bufnr)
         -- local function opts(desc)
-        --     return { desc = "nvim-tree: " .. desc, buffer = bufnr, noremap = true, silent = true, nowait = true }
+        --     return { desc = 'nvim-tree: ' .. desc, buffer = bufnr, noremap = true, silent = true, nowait = true }
         -- end
 
         -- setup the default key mappings
         nvim_tree_api.config.mappings.default_on_attach(bufnr)
 
         -- close the tree when opening a file
-        -- vim.keymap.set("n", "<CR>", nvim_tree_api.node.open.drop, opts("Open"))
+        -- vim.keymap.set('n', '<CR>', nvim_tree_api.node.open.drop, opts('Open'))
     end
 
-    require("nvim-tree").setup({ on_attach = my_on_attach })
+    require('nvim-tree').setup({ on_attach = my_on_attach })
 end
 
 local function set_options()
@@ -27,7 +27,7 @@ local function set_options()
 end
 
 local function set_remaps()
-    vim.keymap.set("n", "<leader>pp", function() nvim_tree_api.tree.open() end)
+    vim.keymap.set('n', '<leader>pp', function() nvim_tree_api.tree.open() end)
 end
 
 function tree_config.setup()

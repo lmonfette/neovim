@@ -1,7 +1,7 @@
 -- setup lsp
-local logging = require('logging')
+local logging = require('lmonfette/logging')
 logging.debug('after/plugin/lsp.lua')
 
-local lsp_config = require('config/lsp')
+local lsp_config = require('lmonfette/config/lsp')
 
 lsp_config.setup()

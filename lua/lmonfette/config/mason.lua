@@ -1,7 +1,7 @@
 -- general
 local mason = require('mason')
-local utils = require('utils')
-local logging = require('logging')
+local utils = require('lmonfette/utils')
+local logging = require('lmonfette/logging')
 -- lsps
 local mason_lspconfig = require('mason-lspconfig')
 local package_to_lspconfig = require('mason-lspconfig.mappings.server').package_to_lspconfig
@@ -14,7 +14,7 @@ local nvim_lint = require('lint')
 local package_to_nvimlint = require('mason-nvim-lint.mapping').package_to_nvimlint
 -- formatters
 local formatter = require('formatter')
-local formatter_util = require "formatter.util"
+local formatter_util = require 'formatter.util'
 
 local function mason_lsps_to_nvim_lsps(package_list)
     local package_list_length = #package_list
@@ -219,7 +219,7 @@ local mason_config = {
         lua         = { 'luacheck' },
         -- m
         make        = { 'checkmake' },
-        md          = { 'markdownlint' },
+        markdown    = { 'markdownlint' },
         -- n
         -- o
         -- p
@@ -339,14 +339,14 @@ local function setup_linters()
     })
 
     -- uitility function to check which linters are attached to the current buffer
-    vim.api.nvim_create_user_command("LintInfo", function()
+    vim.api.nvim_create_user_command('LintInfo', function()
         local filetype = vim.bo.filetype
-        local current_linters = require("lint").linters_by_ft[filetype]
+        local current_linters = require('lint').linters_by_ft[filetype]
 
         if current_linters then
-            logging.info("Linters for " .. filetype .. ": " .. table.concat(current_linters, ", "))
+            logging.info('Linters for ' .. filetype .. ': ' .. table.concat(current_linters, ', '))
         else
-            logging.info("No linters configured for filetype: " .. filetype)
+            logging.info('No linters configured for filetype: ' .. filetype)
         end
     end, {})
 end
@@ -360,45 +360,45 @@ local function setup_formatters()
         log_level = vim.log.levels.WARN,
         -- All formatter configurations are opt-in
         filetype = {
-            -- Formatter configurations for filetype "lua" go here
+            -- Formatter configurations for filetype 'lua' go here
             -- and will be executed in order
             lua = {
-                -- "formatter.filetypes.lua" defines default configurations for the
-                -- "lua" filetype
-                require("formatter.filetypes.lua").stylua,
+                -- 'formatter.filetypes.lua' defines default configurations for the
+                -- 'lua' filetype
+                require('formatter.filetypes.lua').stylua,
 
                 -- You can also define your own configuration
                 function()
 
-                    logging.debug("formatting !")
+                    logging.debug('formatting !')
                     -- Supports conditional formatting
-                    if formatter_util.get_current_buffer_file_name() == "special.lua" then
+                    if formatter_util.get_current_buffer_file_name() == 'special.lua' then
                         return nil
                     end
                     -- Full specification of configurations is down below and in Vim help
                     -- files
                     return {
-                        exe = "stylua",
+                        exe = 'stylua',
                         args = {
-                            "--search-parent-directories",
-                            "--stdin-filepath",
+                            '--search-parent-directories',
+                            '--stdin-filepath',
                             formatter_util.escape_path(formatter_util.get_current_buffer_file_path()),
-                            "--",
-                            "-",
+                            '--',
+                            '-',
                         },
                         stdin = true,
                     }
                 end
             },
 
-            -- Use the special "*" filetype for defining formatter configurations on
+            -- Use the special '*' filetype for defining formatter configurations on
             -- any filetype
-            ["*"] = {
-                -- "formatter.filetypes.any" defines default configurations for any
+            ['*'] = {
+                -- 'formatter.filetypes.any' defines default configurations for any
                 -- filetype
-                require("formatter.filetypes.any").remove_trailing_whitespace,
+                require('formatter.filetypes.any').remove_trailing_whitespace,
                 -- Remove trailing whitespace without 'sed'
-                -- require("formatter.filetypes.any").substitute_trailing_whitespace,
+                -- require('formatter.filetypes.any').substitute_trailing_whitespace,
             }
         }
     }
