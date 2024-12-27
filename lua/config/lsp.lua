@@ -71,8 +71,6 @@ local function init()
             },
         }),
     })
-
-    print('DONE INIT LSP')
 end
 
 local function set_options()

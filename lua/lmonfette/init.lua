@@ -1,4 +1,6 @@
-print('running init.lua /config')
+local logging = require('logging')
+logging.debug('lua/lmonfette/init.lua')
+
 -- setup remaps
 vim.g.mapleader = ' ' -- set the leader variable to be a space
 vim.g.maplocalleader = '\\'
@@ -34,15 +36,10 @@ vim.keymap.set('v', '<C-->', '_')	        -- move cursor to the start of line
 vim.keymap.set('v', '<C-=>', '$<Left>')		-- move cursor to the end of line
 
 -- to get used to neovim
-vim.keymap.set('n', '<Left>', function() print('sucker !') end)
-vim.keymap.set('n', '<Down>', function() print('sucker !') end)
-vim.keymap.set('n', '<Up>', function() print('sucker !') end)
-vim.keymap.set('n', '<Right>', function() print('sucker !') end)
-vim.keymap.set('n', '<Left>', function() print('sucker !') end)
-vim.keymap.set('n', '<Down>', function() print('sucker !') end)
-vim.keymap.set('n', '<Up>', function() print('sucker !') end)
-vim.keymap.set('n', '<Right>', function() print('sucker !') end)
-
+vim.keymap.set('n', '<Left>', function() logging.error('sucker !') end)
+vim.keymap.set('n', '<Down>', function() logging.error('sucker !') end)
+vim.keymap.set('n', '<Up>', function() logging.error('sucker !') end)
+vim.keymap.set('n', '<Right>', function() logging.error('sucker !') end)
 
 -- setup options
 vim.opt.nu              = true  --

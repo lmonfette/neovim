@@ -1,6 +1,7 @@
 -- general
 local mason = require('mason')
 local utils = require('utils')
+local logging = require('logging')
 -- lsps
 local mason_lspconfig = require('mason-lspconfig')
 local package_to_lspconfig = require('mason-lspconfig.mappings.server').package_to_lspconfig
@@ -252,7 +253,7 @@ local mason_config = {
 local function setup_lsps()
     -- check if the buf_ls has been updated and we can ad it back to the list
     if package_to_lspconfig['buf-language-server'] == 'buf_ls' then
-        print('PLEASE PUT buf-language-server BACK IN ensure_installed')
+        logging.error('PLEASE PUT buf-language-server BACK IN ensure_installed')
     end
     -- configure the LSPs (language server protocol)
     mason_lspconfig.setup({
@@ -281,7 +282,7 @@ end
 local function setup_daps()
     -- check if cortex-debug has been added
     if package_to_nvim_dap['cortex-debug'] ~= nil then
-        print('PLEASE ADD cortex-debug TO DAP\'s automatically loaded')
+        logging.error('PLEASE ADD cortex-debug TO DAP\'s automatically loaded')
     end
 
     -- TODO: test daps by running code
@@ -343,9 +344,9 @@ local function setup_linters()
         local current_linters = require("lint").linters_by_ft[filetype]
 
         if current_linters then
-            print("Linters for " .. filetype .. ": " .. table.concat(current_linters, ", "))
+            logging.info("Linters for " .. filetype .. ": " .. table.concat(current_linters, ", "))
         else
-            print("No linters configured for filetype: " .. filetype)
+            logging.info("No linters configured for filetype: " .. filetype)
         end
     end, {})
 end
@@ -369,7 +370,7 @@ local function setup_formatters()
                 -- You can also define your own configuration
                 function()
 
-                    print("formatting !")
+                    logging.debug("formatting !")
                     -- Supports conditional formatting
                     if formatter_util.get_current_buffer_file_name() == "special.lua" then
                         return nil

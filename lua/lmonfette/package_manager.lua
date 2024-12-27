@@ -1,4 +1,6 @@
 -- setup plugin manager (lazy)
+local logging = require('logging')
+logging.debug('lua/lmonfette/package_manager.lua')
 
 local lazy_path = vim.fn.stdpath('data') .. '/lazy/lazy.nvim' -- get the path where to copy lazy's repo
 local lazy_fs_stat = (vim.uv or vim.loop).fs_stat(lazy_path)  -- check that lazy is locally on the file system
