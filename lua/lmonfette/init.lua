@@ -1,5 +1,9 @@
+local utils = require('lmonfette/utils')
 local logging = require('lmonfette/logging')
 logging.debug('lua/lmonfette/init.lua')
+
+-- system installs
+utils.system_install('luarocks', 'luarocks')
 
 -- setup remaps
 vim.g.mapleader = ' ' -- set the leader variable to be a space

@@ -1,4 +1,5 @@
 -- setup plugin manager (lazy)
+local utils = require('lmonfette/utils')
 local logging = require('lmonfette/logging')
 logging.debug('lua/lmonfette/package_manager.lua')
 
