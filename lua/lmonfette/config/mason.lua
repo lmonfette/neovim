@@ -1,6 +1,5 @@
 -- general
 local mason = require('mason')
-local utils = require('lmonfette/utils')
 local logging = require('lmonfette/logging')
 -- lsps
 local mason_lspconfig = require('mason-lspconfig')
@@ -410,8 +409,6 @@ local function setup_formatters()
 end
 
 local function init ()
-    -- install dependencies
-    utils.ensure_installed('luarocks', 'luarocks') -- make sure luarocks is installed
     -- convert the packages to nvim compatible names
     mason_config.nvim_lsps = mason_lsps_to_nvim_lsps(mason_config.mason_lsps)
     mason_config.nvim_daps = mason_daps_to_nvim_daps(mason_config.mason_daps)

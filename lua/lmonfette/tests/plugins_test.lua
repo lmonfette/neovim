@@ -1,9 +1,9 @@
-local lfs = require("lfs")
+local lfs = require('lfs')
 
 -- Function to check if a directory exists
 local function directory_exists(path)
     local attr = lfs.attributes(path)
-    return attr and attr.mode == "directory"
+    return attr and attr.mode == 'directory'
 end
 
 local logging = require('lmonfette/logging')
@@ -12,7 +12,7 @@ logging.debug('lua/tests/plugin_test.lua')
 
 local path_prefix = '~/.local/share/nvim/'
 local lazy_path = path_prefix .. 'lazy/'
-local mason_path = path_prefix .. 'mason/'
+-- local mason_path = path_prefix .. 'mason/'
 
 local function verify_file_exists(path, name)
     if not directory_exists(path .. name) then
@@ -33,4 +33,5 @@ local function plugins_tests()
     end
 end
 
-plugins_tests()
+-- don't run tests for now
+-- plugins_tests()

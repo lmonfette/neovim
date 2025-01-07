@@ -1,7 +1,7 @@
 local utils = require('lmonfette/utils')
 local logging = require('lmonfette/logging')
 
-utils.set_logging_config(vim.log.levels.DEBUG, true)
+utils.set_logging_config(vim.log.levels.INFO, true)
 
 logging.debug('init.lua')
 -- base setup

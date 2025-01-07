@@ -4,6 +4,7 @@ return {
 	dependencies = {
 		{ url = 'https://github.com/nvim-lua/plenary.nvim.git' }, -- plenary is a basic functions library in vim
 		-- other requirements:
+        { url = 'https://github.com/lunarmodules/luafilesystem.git' }
 		--  - ripgrep    (locally): additonnal grep functionalities
 		--  - fd:        (locally): user friendly find utility for the file system
 		--  - treesitter  (plugin): provide code parsing, highlighting and interactive functionalities

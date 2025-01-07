@@ -5,8 +5,8 @@ local telescope_config = {}
 local function init()
 
     -- make sure local package dependencies are met
-    utils.ensure_installed('rg', 'ripgrep') -- make sure ripgrep is installed
-    utils.ensure_installed('fd', 'fd')      -- make sure fd is installed
+    utils.system_install('rg', 'rg')    -- make sure ripgrep is installed
+    utils.system_install('fd', 'fd')    -- make sure fd is installed
 
     -- setup
     local telescope = require('telescope')
