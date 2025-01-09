@@ -25,3 +25,33 @@ leader = " "
 - any directory in the /lua directory can be required by lua (put it there if you need to require it somewhere)
 - /lua/config I have decided to put the personal configs
 - /lua/plugins is where the plugins I want are defined, please check the "plugins" sections higher
+
+--- nvim-tree ---
+
+- pressing 'a' when in the explorer create a file or folder. adding a trailing / makes it a folder
+- pressing 'r' prompts to rename
+- pressing 'd' prompts to delete
+- backspace closes a hovered folder
+- <C-]> navigate into a folder
+
+--- navigation ---
+- <C-o> follow link (not sure)
+- <C-i> come back from a followed link (not sure)
+
+------------------------ READING VIM DOC ------------------------
+
+Vim has many options that can be set.
+
+To check which options are set from their different values, do the command:
+
+":set < >|<all>|<option_name>"
+
+------------------------ neovim tutor ------------------------
+
+- <C-]> follows a link
+- <C-O> comes back from a link
+
+----------------- user manual -----------------------
+
+:help user-manual
+:Tutor
