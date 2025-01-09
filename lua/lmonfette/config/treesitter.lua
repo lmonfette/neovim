@@ -1,3 +1,4 @@
+local utils = require('lmonfette/utils')
 local nvim_ts_configs = require('nvim-treesitter.configs')
 
 local treesitter_config = {
@@ -85,6 +86,8 @@ local treesitter_config = {
 }
 
 local function init()
+    utils.system_ensure_installed('tree-sitter')
+
     nvim_ts_configs.setup {
         -- A list of parser names, or 'all' (the listed parsers MUST always be installed)
         ensure_installed = treesitter_config.languages,

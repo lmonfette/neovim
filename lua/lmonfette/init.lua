@@ -3,13 +3,13 @@ local logging = require('lmonfette/logging')
 logging.debug('lua/lmonfette/init.lua')
 
 -- system installs
-utils.system_install('luarocks', 'luarocks')
+utils.system_ensure_installed('luarocks')
 
 -- setup remaps
 vim.g.mapleader = ' ' -- set the leader variable to be a space
 vim.g.maplocalleader = '\\'
 
-vim.g.wrap = false;
+vim.o.wrap = false;
 
 -- please install nerd fonts on you computer: https://github.com/ryanoasis/nerd-fonts.git
 

@@ -12,27 +12,9 @@ function utils_module.split(string, pattern)
     return strings
 end
 
-function utils_module.system_install(tool, brew_name)
-
-    local os_name = vim.loop.os_uname().sysname
-    local install_command = ''
-    if os_name == 'Linux' then
-        install_command = 'sudo apt update && sudo apt install -y'
-    elseif os_name == 'Darwin' then
-        install_command = 'brew install'
-    else
-        logging.info('Unsupported OS for system installation.')
-    end
-
-    if vim.fn.executable(tool) == 0 then
-        logging.info(tool .. ' not found, installing on system...')
-        local install_cmd = install_command .. ' ' .. brew_name
-        local result = vim.fn.system(install_cmd)
-        if vim.v.shell_error == 0 then
-            logging.info(tool .. ' installed successfully.')
-        else
-            logging.error('Error installing ' .. tool .. ': ' .. result)
-        end
+function utils_module.system_ensure_installed(cli_name)
+    if vim.fn.executable(cli_name) == 0 then
+        logging.error('cli "' .. cli_name .. '" not found !')
     end
 end
 

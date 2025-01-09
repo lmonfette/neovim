@@ -5,9 +5,8 @@ local telescope_config = {}
 local function init()
 
     -- make sure local package dependencies are met
-    utils.system_install('rg', 'rg')    -- make sure ripgrep is installed
-    utils.system_install('fd', 'fd')    -- make sure fd is installed
-
+    utils.system_ensure_installed('rg')    -- make sure ripgrep is installed
+    utils.system_ensure_installed('fd')    -- make sure fd is installed
     -- setup
     local telescope = require('telescope')
 
@@ -42,25 +41,24 @@ local function init()
                     -- please take a look at the readme of the extension you want to configure
                 }
             }
+            telescope.setup(setup_params)
+        end
 
-telescope.setup(setup_params)
-end
+        local function set_options()
+        end
 
-local function set_options()
-end
+        local function set_remaps()
+            local builtin = require('telescope.builtin')
+            vim.keymap.set('n', '<leader>ff', builtin.find_files, { desc = 'Telescope find files' })    -- find a file by name opened root directory
+            vim.keymap.set('n', '<leader>fg', builtin.live_grep, { desc = 'Telescope live grep' })      -- find a file by greping in it
+            vim.keymap.set('n', '<leader>fb', builtin.buffers, { desc = 'Telescope buffers' })          -- find a file from the opened buffers
+            vim.keymap.set('n', '<leader>fh', builtin.help_tags, { desc = 'Telescope help tags' })      -- find a help menu
+        end
 
-local function set_remaps()
-    local builtin = require('telescope.builtin')
-    vim.keymap.set('n', '<leader>ff', builtin.find_files, { desc = 'Telescope find files' })    -- find a file by name search in opened root directory
-    vim.keymap.set('n', '<leader>fg', builtin.live_grep, { desc = 'Telescope live grep' })      -- find a file by greping in it
-    vim.keymap.set('n', '<leader>fb', builtin.buffers, { desc = 'Telescope buffers' })          -- find a file from the opened buffers
-    vim.keymap.set('n', '<leader>fh', builtin.help_tags, { desc = 'Telescope help tags' })      -- find a help menu
-end
+        function telescope_config.setup()
+            init()
+            set_options()
+            set_remaps()
+        end
 
-function telescope_config.setup()
-    init()
-    set_options()
-    set_remaps()
-end
-
-return telescope_config
+        return telescope_config

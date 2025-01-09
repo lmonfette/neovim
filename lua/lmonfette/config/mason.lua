@@ -81,7 +81,6 @@ local mason_config = {
         'marksman',
         'matlab-language-server',
         -- n
-        'nginx-language-server',
         -- o
         -- p
         'powershell-editor-services',
