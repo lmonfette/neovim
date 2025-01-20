@@ -1,6 +1,8 @@
 -- lspzero config
 local lsp_config = {}
 
+local cmp = require('cmp')
+
 local function init()
 
     -- This should be executed before you configure any language server
@@ -29,14 +31,20 @@ local function init()
         end,
     })
 
-    local cmp = require('cmp')
     local cmp_select = { behevior = cmp.SelectBehavior.Select }
 
     cmp.setup({
-        sources = {
-            { name = 'nvim_lsp' },
-            { name = 'buffer' },
+        snippet = {
+            expand = function (args)
+                require('luasnip').lsp_expand(args.body)
+            end
         },
+        sources = cmp.config.sources({
+            { name = 'nvim_lsp' },
+            { name = 'luasnip' },
+        },{
+            { name = 'buffer' }
+        }),
         preselect = 'item',
         completion = {
             completeopt = 'menu,menuone,noinsert'
@@ -44,7 +52,7 @@ local function init()
         mapping = cmp.mapping.preset.insert({
             ['<Up>'] = cmp.mapping.select_prev_item(cmp_select),
             ['<Down>'] = cmp.mapping.select_next_item(cmp_select),
-            ['<Tab>'] = cmp.mapping.confirm({ select = false}),
+            ['<Tab>'] = cmp.mapping.confirm({ select = false }),
             ['<C-Space>'] = cmp.mapping.complete(),
         })
     })

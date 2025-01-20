@@ -1,0 +1,35 @@
+run this command:
+
+cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON .
+
+fix errors for cmake to produce a compile_commands.json
+
+Also, a .clangd file should be made if others includes don't work.
+It serves as an overlay to make the LSP shut up if there are missing
+configs in the compile_commands.json
+
+```
+---
+CompileFlags:
+  Add: [-isystem, /absolute/path/to/another/include/directory/]
+```
+
+The LSP might still complain if he does not like some pariticular flags that he does not know. For example:
+
+"-fno-move-loop-invariants"
+
+```
+{
+  "directory": "/home/lmonfette/Desktop/dev/variable-attenuator/build/test-variable-attenuator-firmware",
+  "command": "/home/lmonfette/Desktop/dev/variable-attenuator/.micromamba/envs/spark/bin/arm-none-eabi-gcc -I/home/lmonfette/Desktop/dev/variable-attenuator/third-party/cmsis_5/src/CMSIS/Core/Include -I/home/lmonfette/Desktop/dev/variable-attenuator/third-party/cmsis_5/src/CMSIS/DSP/Include -mcpu=cortex-m0plus -mthumb -mfloat-abi=soft -fmessage-length=0 -ffunction-sections -fdata-sections -fno-common -fno-omit-frame-pointer -fsingle-precision-constant -Wdouble-promotion -fno-move-loop-invariants -fno-stack-protector -Wall -Wextra -Wshadow=compatible-local -Werror=implicit-function-declaration -O2 -g -DNDEBUG -o third-party/cmsis_5/CMakeFiles/cmsis_5.dir/src/CMSIS/DSP/Source/FilteringFunctions/arm_fir_decimate_q15.c.obj -c /home/lmonfette/Desktop/dev/variable-attenuator/third-party/cmsis_5/src/CMSIS/DSP/Source/FilteringFunctions/arm_fir_decimate_q15.c",
+  "file": "/home/lmonfette/Desktop/dev/variable-attenuator/third-party/cmsis_5/src/CMSIS/DSP/Source/FilteringFunctions/arm_fir_decimate_q15.c"
+}
+```
+
+Simply remove those flags from the file:
+
+":%s/pattern//g"
+
+OR EVEN BETTER, add this like this .clangd:
+"Remove: [-fno-move-loop-invariants]"
+

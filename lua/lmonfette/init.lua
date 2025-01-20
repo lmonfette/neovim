@@ -33,10 +33,15 @@ vim.keymap.set('n', '<Right>', function() logging.error('sucker !') end)
 
 -- remove highlight
 vim.keymap.set('n', '<leader>no', ':noh<CR>', { noremap = true, silent = true })
+vim.keymap.set('n', '<leader>rt', ':! ceedling test:all<CR>', { noremap = true, silent = true })
+
+vim.api.nvim_create_user_command('W', 'w', {})
 
 -- setup options
-vim.opt.nu              = true  --
+vim.opt.number          = true --
 vim.opt.relativenumber  = true --
+
+vim.o.cursorline        = true --
 
 vim.o.tabstop           = 4     -- a tab creates up to 4 spaces
 vim.o.shiftwidth        = 4     -- a tab is the size of 4 spaces for auto indent

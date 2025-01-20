@@ -34,7 +34,7 @@ extra 	Recording commands			-- (q<letter>, @<letter>)
 4.5	Moving text                             -- (p, P)
 4.6	Copying text                            -- (yw, ye, yb, yy, Y)
 4.7	Using the clipboard                     -- ("*yy, "*p)
-4.8	Text objects                            -- (diw, daw, ciw, caw, cis, cas)
+4.8	Text objects                            -- (diw, daw, ciw, caw, cis, cas, viw, vaw)
 4.9	Replace mode                            -- (R)
 4.10	Conclusion                              -- (~, I, A)
 

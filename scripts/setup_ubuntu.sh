@@ -4,14 +4,22 @@
 sudo apt update -y
 sudo apt upgrade -y
 
-# install git
-sudo apt install git
+echo "Install nerd fonts: https://medium.com/@almatins/install-nerdfont-or-any-fonts-using-the-command-line-in-debian-or-other-linux-f3067918a88c"
 
-# install neovim
-sudo apt install -y neovim
+# install git
+sudo apt install -y git
+
+#install cmake
+sudo apt install -y cmake
 
 # install vim
 sudo apt install -y vim
+
+# install xclip to allow copy/paste to clipboard
+sudo apt install -y xclip
+
+# install ruby
+sudo apt install -y ruby
 
 # install luarocks (package manager used by neovim)
 sudo apt install -y luarocks

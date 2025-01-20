@@ -18,7 +18,19 @@ local function init()
         -- vim.keymap.set('n', '<CR>', nvim_tree_api.node.open.drop, opts('Open'))
     end
 
-    require('nvim-tree').setup({ on_attach = my_on_attach })
+    require('nvim-tree').setup(
+        {
+            on_attach = my_on_attach,
+            view = {
+                number = true,
+                relativenumber = true,
+                width = 40,
+            },
+            filters = {
+                git_ignored = false,
+                dotfiles = false,
+            },
+        })
 end
 
 local function set_options()
