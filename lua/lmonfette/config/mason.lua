@@ -14,7 +14,7 @@ local nvim_lint = require('lint')
 local package_to_nvimlint = require('mason-nvim-lint.mapping').package_to_nvimlint
 -- formatters
 local formatter = require('formatter')
-local formatter_util = require 'formatter.util'
+local formatter_util = require('formatter.util')
 
 local function mason_lsps_to_nvim_lsps(package_list)
     local package_list_length = #package_list
@@ -132,7 +132,7 @@ local mason_config = {
         -- n
         -- o
         -- p
-        'php-debug-adapter'
+        'php-debug-adapter',
         -- q
         -- r
         -- s
@@ -192,7 +192,7 @@ local mason_config = {
         -- w
         -- x
         -- y
-        'yamllint'
+        'yamllint',
         -- z
     },
     nvim_linters = {}, -- defined in setup function
@@ -200,56 +200,54 @@ local mason_config = {
         -- a
         -- b
         -- c
-        c           = { 'cpplint' },
-        cpp         = { 'cpplint' },
         -- d
-        dockerfile  = { 'hadolint' },
+        dockerfile = { 'hadolint' },
         -- e
         -- f
         -- g
-        gd          = { 'gdtoolkit' },
-        go          = { 'golangci-lint' },
+        gd = { 'gdtoolkit' },
+        go = { 'golangci-lint' },
         -- h
-        html        = { 'htmlhint' },
+        html = { 'htmlhint' },
         -- i
         -- j
-        js          = { 'eslint_d' },
-        json        = { 'jsonlint' },
-        jsx         = { 'eslint_d' },
+        js = { 'eslint_d' },
+        json = { 'jsonlint' },
+        jsx = { 'eslint_d' },
         -- k
         -- l
-        lua         = { 'luacheck' },
+        lua = { 'luacheck' },
         -- m
-        make        = { 'checkmake' },
-        markdown    = { 'markdownlint' },
+        make = { 'checkmake' },
+        markdown = { 'markdownlint' },
         -- n
         -- o
         -- p
-        php         = { 'phpcs' },
-        proto       = { 'protolint' },
-        py          = { 'flake8' },
+        php = { 'phpcs' },
+        proto = { 'protolint' },
+        py = { 'flake8' },
         -- q
         -- r
-        rs          = { 'ast-grep' },
+        rs = { 'ast-grep' },
         -- s
-        sh          = { 'shellcheck' },
-        sql         = { 'sqlfluff' },
+        sh = { 'shellcheck' },
+        sql = { 'sqlfluff' },
         -- t
-        tex         = { 'vale' },
-        tf          = { 'tflint' },
-        ts          = { 'eslint_d' },
-        tsx         = { 'eslint_d' },
-        txt         = { 'cmakelint' },
+        tex = { 'vale' },
+        tf = { 'tflint' },
+        ts = { 'eslint_d' },
+        tsx = { 'eslint_d' },
+        txt = { 'cmakelint' },
         -- u
         -- v
-        vim         = { 'vint' },
+        vim = { 'vint' },
         -- w
         -- x
         -- y
-        yml         = { 'ansible-lint', 'yamllint' },
-        yaml        = { 'ansible-lint', 'yamllint' },
+        yml = { 'ansible-lint', 'yamllint' },
+        yaml = { 'ansible-lint', 'yamllint' },
         -- z
-    }
+    },
 }
 
 local function setup_lsps()
@@ -270,10 +268,10 @@ local function setup_lsps()
                         settings = {
                             Lua = {
                                 diagnostics = {
-                                    globals = { 'vim' }
-                                }
-                            }
-                        }
+                                    globals = { 'vim' },
+                                },
+                            },
+                        },
                     }
                 end
                 require('lspconfig')[server_name].setup(setup_params)
@@ -285,7 +283,7 @@ end
 local function setup_daps()
     -- check if cortex-debug has been added
     if package_to_nvim_dap['cortex-debug'] ~= nil then
-        logging.error('PLEASE ADD cortex-debug TO DAP\'s automatically loaded')
+        logging.error("PLEASE ADD cortex-debug TO DAP's automatically loaded")
     end
 
     -- TODO: test daps by running code
@@ -314,8 +312,9 @@ local function setup_linters()
     for linter_by_ft_name, _ in pairs(nvim_lint.linters_by_ft) do
         table.insert(nvim_lint.linters_by_ft[linter_by_ft_name], 'codespell')
 
-        for i,_ in ipairs(nvim_lint.linters_by_ft[linter_by_ft_name]) do
-            nvim_lint.linters_by_ft[linter_by_ft_name][i] = package_to_nvimlint[nvim_lint.linters_by_ft[linter_by_ft_name][i]];
+        for i, _ in ipairs(nvim_lint.linters_by_ft[linter_by_ft_name]) do
+            nvim_lint.linters_by_ft[linter_by_ft_name][i] =
+                package_to_nvimlint[nvim_lint.linters_by_ft[linter_by_ft_name][i]]
         end
     end
 
@@ -327,18 +326,20 @@ local function setup_linters()
             nvim_lint_name = linter_name
         end
 
-        local linter = nvim_lint.linters[nvim_lint_name];
+        local linter = nvim_lint.linters[nvim_lint_name]
         if linter ~= nil then
-            linter.ignore_exitcode = false;
+            linter.ignore_exitcode = false
             nb_found = nb_found + 1
         else
             error(linter_name .. ' not found ...')
         end
     end
 
-    vim.api.nvim_create_autocmd('BufWritePost',{
+    vim.api.nvim_create_autocmd('BufWritePost', {
         desc = 'Try to lint post buffer write',
-        callback = function() nvim_lint.try_lint() end
+        callback = function()
+            nvim_lint.try_lint()
+        end,
     })
 
     -- uitility function to check which linters are attached to the current buffer
@@ -356,7 +357,7 @@ end
 
 local function setup_formatters()
     -- Provides the Format, FormatWrite, FormatLock, and FormatWriteLock commands
-    formatter.setup {
+    formatter.setup({
         -- Enable or disable logging
         logging = true,
         -- Set the log level
@@ -372,7 +373,6 @@ local function setup_formatters()
 
                 -- You can also define your own configuration
                 function()
-
                     logging.debug('formatting !')
                     -- Supports conditional formatting
                     if formatter_util.get_current_buffer_file_name() == 'special.lua' then
@@ -391,9 +391,53 @@ local function setup_formatters()
                         },
                         stdin = true,
                     }
-                end
+                end,
             },
-
+            cpp = {
+                require('formatter.filetypes.c').clangformat,
+                function()
+                    local util = require('formatter.util')
+                    return {
+                        exe = 'clang-format',
+                        args = {
+                            '-assume-filename',
+                            util.escape_path(util.get_current_buffer_file_name()),
+                        },
+                        stdin = true,
+                        try_node_modules = true,
+                    }
+                end,
+            },
+            c = {
+                require('formatter.filetypes.c').clangformat,
+                function()
+                    local util = require('formatter.util')
+                    return {
+                        exe = 'clang-format',
+                        args = {
+                            '-assume-filename',
+                            util.escape_path(util.get_current_buffer_file_name()),
+                        },
+                        stdin = true,
+                        try_node_modules = true,
+                    }
+                end,
+            },
+            h = {
+                require('formatter.filetypes.c').clangformat,
+                function()
+                    local util = require('formatter.util')
+                    return {
+                        exe = 'clang-format',
+                        args = {
+                            '-assume-filename',
+                            util.escape_path(util.get_current_buffer_file_name()),
+                        },
+                        stdin = true,
+                        try_node_modules = true,
+                    }
+                end,
+            },
             -- Use the special '*' filetype for defining formatter configurations on
             -- any filetype
             ['*'] = {
@@ -402,12 +446,20 @@ local function setup_formatters()
                 require('formatter.filetypes.any').remove_trailing_whitespace,
                 -- Remove trailing whitespace without 'sed'
                 -- require('formatter.filetypes.any').substitute_trailing_whitespace,
-            }
-        }
-    }
+            },
+        },
+    })
+
+    local augroup = vim.api.nvim_create_augroup
+    local autocmd = vim.api.nvim_create_autocmd
+    augroup('__formatter__', { clear = true })
+    autocmd('BufWritePost', {
+        group = '__formatter__',
+        command = ':FormatWrite',
+    })
 end
 
-local function init ()
+local function init()
     -- convert the packages to nvim compatible names
     mason_config.nvim_lsps = mason_lsps_to_nvim_lsps(mason_config.mason_lsps)
     mason_config.nvim_daps = mason_daps_to_nvim_daps(mason_config.mason_daps)
@@ -421,8 +473,7 @@ local function init ()
     setup_formatters()
 end
 
-local function set_options()
-end
+local function set_options() end
 
 local function set_remaps()
     vim.keymap.set('n', '<leader>mm', vim.cmd.Mason)

@@ -1,0 +1,22 @@
+1. writing doxygen comments (please find something to automate that) -> better, but would still like better to update on the fly and can tab between parameters (please implement our C Coding Style)
+2. how can I renumber all next found number + 1? like this list is not ordered right now
+3. how can I close and open brackets {}
+2. creating the file skeleton when creating new
+3. switching between files
+4. replacing all words like in vscode with <Ctr-Shift-d> and <Ctr-Shift-l>
+5. not knowing how to control windows easily -> :vsplit, <C-w> number <|>
+6. would be nice if w, e and b could detect _ and other stuff like that
+7. can I have a 'caw' that would be 'cae'? like one less character -> YES: ciw (change inner word)
+8. implement the C coding style in a linter file that my neovim setup uses
+9. LSP: find a way to generate the compile_commands.json (record in a script or template section on neovim setup)
+9. I want to create more snippets and trigger those defined in VSCode
+10. I would like the brackets to automatically create two when I write 1, also, when press enter, it formats it down with cursor indented
+11. would be nice to have something that aligns all the seconds words off a group:
+    float var1; ->  float   var1;
+    int var2;       int     var2;
+12. have a plugin that can make accents
+13. not seeing the files/folders starting with a ., ex: .config
+14. writing the whole word in the grep replace command, I want to only have to select it and then make a macro
+15. tmux
+16. alacritty
+17. use stow to manage dotfiles
