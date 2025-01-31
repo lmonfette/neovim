@@ -1,236 +1,79 @@
+local line_types = require('lmonfette/config/coding_style/doxygen/line_types')
+local utils = require('lmonfette/config/coding_style/doxygen/utils')
+local formatter = require('lmonfette/config/coding_style/doxygen/formatter')
 local coding_style_config = {}
-
-
-local function split_into_words(sentence)
-    local words = {}
-    local current_word = ''
-
-    for i = 1, #sentence do
-        local char = string.sub(sentence, i, i) -- Or just sentence[i] in Lua 5.3+
-
-        if char == ' ' then
-            if current_word ~= '' then -- Check for empty words due to multiple spaces
-                table.insert(words, current_word)
-                current_word = ''
-            end
-        else
-            current_word = current_word .. char -- Or current_word ..= char in Lua 5.3+
-        end
-    end
-
-    if current_word ~= '' then -- Add the last word (if any)
-        table.insert(words, current_word)
-    end
-
-    return words
-end
-
-local function get_line_info(words)
-    if #words == 1 then
-        if words[1] == '*' or words[1] == '/*' or words[1] == '/**' then
-            return statement_type.empty_line_s
-        end
-    end
-    for _, word in ipairs(words) do
-        if word == '@param[in]' or word == '@param[out]' or word == '@param[in|out]' then
-            return statement_type.param_s
-        elseif word == '@li' then
-            return statement_type.list_item_s
-        elseif word == '@retval' then
-            return statement_type.retval_s
-        elseif word == '@return' then
-            return statement_type.return_s
-        elseif word == '@syntax' then
-            return statement_type.syntax_s
-        elseif word == '@brief' then
-            return statement_type.brief_s
-        elseif word == '@file' then
-            return statement_type.file_s
-        end
-    end
-    return statement_type.none_s
-end
-
-local function capitalize_first_letter(str)
-    return str:sub(1, 1):upper() .. str:sub(2)
-end
-
-local function ensure_period(str)
-    if str:sub(-1) ~= '.' then
-        return str .. '.'
-    end
-    return str
-end
-
-local function replace_lines(start_line, end_line, new_lines)
-    local bufnr = vim.api.nvim_get_current_buf() -- Get the current buffer
-    vim.api.nvim_buf_set_lines(bufnr, start_line, end_line, false, new_lines)
-end
-
-local function delete_line(line_number)
-    local bufnr = vim.api.nvim_get_current_buf() -- Get the current buffer
-    vim.api.nvim_buf_set_lines(bufnr, line_number - 1, line_number, false, {})
-end
-
-local function format_brief_line(words)
-    local spacers = {}
-    for i = 1, #words do
-        spacers[i] = ' '
-    end
-
-    local word_index = 2
-
-    local line = '/**' .. spacers[word_index] .. words[word_index]
-    word_index = word_index + 1
-
-    if #words < 3 then
-        return line
-    end
-
-    print('3')
-    words[word_index] = capitalize_first_letter(words[word_index])
-    words[#words] = ensure_period(words[#words])
-
-    for i = word_index, #words do
-        line = line .. spacers[i] .. words[i]
-    end
-    return line
-end
-
-local function format_syntax_line(lines) end
-
-local function contains_statement_type(stmt_types, the_statement_type)
-    for _, stmt_type in ipairs(stmt_types) do
-        if stmt_type == the_statement_type then
-            return true
-        end
-    end
-    return false
-end
 
 local function format_doygen_comments(lines, whitespaces)
     local replace = false
     local words_array = {}
 
+    -- split the lines into word arrays
     for i, line in ipairs(lines) do
-        words_array[i] = split_into_words(line)
+        words_array[i] = utils.split_into_words(line)
     end
 
     local longest_tag = 0
     local longest_id = 0
     local stmt_types = {}
 
+    -- extract line info
     for i, words in ipairs(words_array) do
-        stmt_types[i] = get_line_info(words)
+        stmt_types[i] = utils.extract_line_type(words)
+
         local tag_len
-        local id_len = 0
+        local id_len
 
-        if #words > 2 then
-            if stmt_types[i] ~= statement_type.empty_line_s and stmt_types[i] ~= statement_type.none_s then
-                replace = true
-                tag_len = words[2]:len()
-                if
-                    stmt_types[i] == statement_type.param_s
-                    or stmt_types[i] == statement_type.retval_s
-                    or stmt_types[i] == statement_type.list_item_s
-                then
-                    id_len = words[3]:len()
-                end
+        if
+            stmt_types[i] == line_types.param
+            or stmt_types[i] == line_types.retval
+            or stmt_types[i] == line_types.list_item
+        then
+            replace = true
+            tag_len = words[2]:len()
+            id_len = words[3]:len()
 
-                longest_tag = tag_len > longest_tag and tag_len or longest_tag
-                longest_id = id_len > longest_id and id_len or longest_id
-            end
+            longest_tag = tag_len > longest_tag and tag_len or longest_tag
+            longest_id = id_len > longest_id and id_len or longest_id
+        end
+        if stmt_types[i] == line_types.syntax or stmt_types[i] == line_types.return_ then
+            replace = true
         end
     end
 
     for i, words in ipairs(words_array) do
-        local minimum_spaces_between_tag_and_description = 2
-        print_st(stmt_types[i])
-        print('line = ' .. lines[i])
-        if stmt_types[i] == statement_type.brief_s then
-            if contains_statement_type(stmt_types, statement_type.file_s) == false then
-                lines[i] = format_brief_line(words)
-            end
-        elseif i == 1 then
-            lines[i] = whitespaces .. lines[i]
-        elseif
-            stmt_types[i] == statement_type.list_item_s
-            or stmt_types[i] == statement_type.param_s
-            or stmt_types[i] == statement_type.return_s
-            or stmt_types[i] == statement_type.retval_s
+        local line_whitespaces = whitespaces
+        local lmd = {
+            i > 1 and stmt_types[i] == line_types.brief and not utils.contains_statement_type(
+                stmt_types,
+                line_types.file
+            ) and true or false,
+            longest_tag,
+            longest_id,
+        }
+        lines[i] = formatter.handlers[stmt_types[i]](lines[i], words, lmd)
+
+        if
+            stmt_types[i] == line_types.empty
+            or stmt_types[i] == line_types.start
+            or stmt_types[i] == line_types.end_
+            or stmt_types[i] == line_types.text
         then
-            local word_index = 1
-
-            local line = ' ' .. words[word_index]
-            word_index = word_index + 1
-
-            if stmt_types[i] == statement_type.list_item_s then
-                line = line .. '  '
-            end
-
-            line = line .. ' ' .. words[word_index]
-            word_index = word_index + 1
-
-            local nb_spaces
-
-            if stmt_types[i] == statement_type.retval_s then
-                -- we format a retval
-                nb_spaces = longest_tag - words[word_index - 1]:len() + minimum_spaces_between_tag_and_description
-                nb_spaces = nb_spaces + longest_id + minimum_spaces_between_tag_and_description
-
-                for _ = 1, nb_spaces do
-                    line = line .. ' '
-                end
-            else
-                -- we format a param or return
-                nb_spaces = longest_tag - words[word_index - 1]:len() + minimum_spaces_between_tag_and_description
-
-                if stmt_types[i] == statement_type.list_item_s then
-                    nb_spaces = nb_spaces - 2
-                end
-
-                for _ = 1, nb_spaces do
-                    line = line .. ' '
-                end
-
-                line = line .. words[word_index]
-                word_index = word_index + 1
-
-                nb_spaces = longest_id - words[word_index - 1]:len() + minimum_spaces_between_tag_and_description
-                for _ = 1, nb_spaces do
-                    line = line .. ' '
-                end
-            end
-
-            if word_index == #words then
-                print('1')
-                lines[i] = whitespaces .. line .. ensure_period(capitalize_first_letter(words[word_index]))
-            else
-                print('2')
-                print('#words = ' .. tostring(#words))
-                print('word_index = ' .. tostring(word_index))
-                line = line .. capitalize_first_letter(words[word_index]) .. ' '
-                word_index = word_index + 1
-
-                for j = word_index, #words - 1 do
-                    line = line .. words[j] .. ' '
-                end
-
-                line = line .. ensure_period(words[#words])
-
-                lines[i] = whitespaces .. line
+            if i ~= 1 then
+                line_whitespaces = ''
             end
         end
+
+        lines[i] = line_whitespaces .. lines[i]
     end
 
-    if contains_statement_type(stmt_types, statement_type.brief_s) == false then
+    if utils.contains_statement_type(stmt_types, line_types.brief) == false then
         return replace and lines or nil
     end
 
     local lines_indices_to_remove = {}
 
     for i, stmt_type in ipairs(stmt_types) do
-        if stmt_type == statement_type.empty_line_s then
+        if stmt_type == line_types.empty or stmt_type == line_types.text or stmt_type == line_types.start then
             lines_indices_to_remove[#lines_indices_to_remove + 1] = i
         else
             break
@@ -238,7 +81,7 @@ local function format_doygen_comments(lines, whitespaces)
     end
 
     for i = #stmt_types - 1, 1, -1 do
-        if stmt_types[i] == statement_type.empty_line_s then
+        if stmt_types[i] == line_types.empty then
             lines_indices_to_remove[#lines_indices_to_remove + 1] = i
         else
             break
@@ -301,7 +144,7 @@ local function find_brief_comments()
         local new_lines = format_doygen_comments(lines, whitespaces)
         if new_lines ~= nil then
             local new_end_row = end_row + 1 - (#lines - #new_lines)
-            replace_lines(start_row, new_end_row, new_lines)
+            utils.replace_lines(start_row, new_end_row, new_lines)
 
             for i = new_end_row, end_row do
                 lines_to_remove[#lines_to_remove + 1] = i
@@ -310,7 +153,7 @@ local function find_brief_comments()
     end
 
     for i = #lines_to_remove, 1, -1 do
-        delete_line(lines_to_remove[i])
+        utils.delete_line(lines_to_remove[i])
     end
 end
 
