@@ -1,43 +1,5 @@
 local coding_style_config = {}
 
-local statement_type = {
-    none_s = 0,
-    empty_line_s = 1,
-    brief_s = 2,
-    param_s = 3,
-    list_item_s = 4,
-    retval_s = 5,
-    return_s = 6,
-    syntax_s = 7,
-    file_s = 8,
-}
-
-local function st_to_string(st)
-    if st == statement_type.none_s then
-        return 'none'
-    elseif st == statement_type.empty_line_s then
-        return 'empty_line'
-    elseif st == statement_type.brief_s then
-        return 'brief'
-    elseif st == statement_type.param_s then
-        return 'param'
-    elseif st == statement_type.list_item_s then
-        return 'list_item'
-    elseif st == statement_type.retval_s then
-        return 'retval'
-    elseif st == statement_type.return_s then
-        return 'return'
-    elseif st == statement_type.syntax_s then
-        return 'syntax'
-    elseif st == statement_type.file_s then
-        return 'file'
-    end
-    return 'unknown'
-end
-
-local function print_st(st)
-    print(st_to_string(st))
-end
 
 local function split_into_words(sentence)
     local words = {}
