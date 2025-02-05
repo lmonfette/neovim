@@ -1,6 +1,6 @@
 local logging = require('lmonfette/logging')
 local utils = require('lmonfette/config/coding_style/doxygen/utils')
-local line_types = require('lmonfette/config/coding_style/doxygen/line_types')
+local types = require('lmonfette/config/coding_style/doxygen/types')
 
 local should_be_first_line_index = 1
 local longest_tag_index = 2
@@ -223,23 +223,23 @@ local function format_end_line(line)
 end
 
 formatter.handlers = {
-    [line_types.unknown] = format_unknown_line,
-    [line_types.file] = format_file_line,
-    [line_types.author] = format_author_line,
-    [line_types.date] = format_date_line,
-    [line_types.version] = format_version_line,
-    [line_types.brief] = format_brief_line,
-    [line_types.param] = format_param_line,
-    [line_types.list_item] = format_list_item_line,
-    [line_types.retval] = format_retval_line,
-    [line_types.return_] = format_return_line,
-    [line_types.syntax] = format_syntax_line,
-    [line_types.text] = format_text_line,
-    [line_types.copyright] = format_copyright_line,
-    [line_types.license] = format_license_line,
-    [line_types.empty] = format_empty_line,
-    [line_types.start] = format_start_line,
-    [line_types.end_] = format_end_line,
+    [types.line.unknown] = format_unknown_line,
+    [types.line.file] = format_file_line,
+    [types.line.author] = format_author_line,
+    [types.line.date] = format_date_line,
+    [types.line.version] = format_version_line,
+    [types.line.brief] = format_brief_line,
+    [types.line.param] = format_param_line,
+    [types.line.list_item] = format_list_item_line,
+    [types.line.retval] = format_retval_line,
+    [types.line.return_] = format_return_line,
+    [types.line.syntax] = format_syntax_line,
+    [types.line.text] = format_text_line,
+    [types.line.copyright] = format_copyright_line,
+    [types.line.license] = format_license_line,
+    [types.line.empty] = format_empty_line,
+    [types.line.start] = format_start_line,
+    [types.line.end_] = format_end_line,
 }
 
 return formatter

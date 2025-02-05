@@ -122,3 +122,13 @@ don't forget that you can use actions like this:
 try it:
 
 salut:salut hello yolo
+
+8. folding
+
+zo → Open the current fold (unfold one level).
+zO → Open recursively (unfold all nested folds inside the current fold).
+zc → Close the current fold.
+zC → Close recursively (fold all nested folds inside).
+za → Toggle fold open/close.
+zR → Open all folds in the buffer (fully unfold everything).
+zM → Close all folds in the buffer (fully fold everything)

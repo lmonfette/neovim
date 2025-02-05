@@ -1,24 +1,24 @@
-local line_types = require('lmonfette/config/coding_style/doxygen/line_types')
+local types = require('lmonfette/config/coding_style/doxygen/types')
 local utils = {}
 
 utils.line_type_to_type_name = {
-    [line_types.unknown] = 'unknown',
-    [line_types.file] = 'file',
-    [line_types.author] = 'author',
-    [line_types.date] = 'date',
-    [line_types.version] = 'version',
-    [line_types.brief] = 'brief',
-    [line_types.param] = 'param',
-    [line_types.list_item] = 'list item',
-    [line_types.retval] = 'retval',
-    [line_types.return_] = 'return',
-    [line_types.syntax] = 'syntax',
-    [line_types.text] = 'text',
-    [line_types.copyright] = 'copyright',
-    [line_types.license] = 'license',
-    [line_types.empty] = 'empty line',
-    [line_types.start] = 'start line',
-    [line_types.end_] = 'end line',
+    [types.line.unknown] = 'unknown',
+    [types.line.file] = 'file',
+    [types.line.author] = 'author',
+    [types.line.date] = 'date',
+    [types.line.version] = 'version',
+    [types.line.brief] = 'brief',
+    [types.line.param] = 'param',
+    [types.line.list_item] = 'list item',
+    [types.line.retval] = 'retval',
+    [types.line.return_] = 'return',
+    [types.line.syntax] = 'syntax',
+    [types.line.text] = 'text',
+    [types.line.copyright] = 'copyright',
+    [types.line.license] = 'license',
+    [types.line.empty] = 'empty line',
+    [types.line.start] = 'start line',
+    [types.line.end_] = 'end line',
 }
 
 function utils.print_type_name(line_type)
@@ -60,52 +60,62 @@ function utils.contains_statement_type(stmt_types, the_statement_type)
     return false
 end
 
+function utils.extract_file_section(line)
+    for _, file_section in ipairs(types.file_section) do
+        if line.find(types.file_section_keywords[file_section]) then
+            return file_section
+        end
+    end
+
+    return types.file_section.unknown
+end
+
 function utils.extract_line_type(words)
     if #words == 1 then
         if words[1] == '*' then
-            return line_types.empty
+            return types.line.empty
         elseif words[1] == '/*' or words[1] == '/**' then
-            return line_types.start
+            return types.line.start
         elseif words[1] == '*/' or words[1] == '**/' then
-            return line_types.end_
+            return types.line.end_
         end
     end
 
     for _, word in ipairs(words) do
         if word == '@file' then
-            return line_types.file
+            return types.line.file
         elseif word == '@author' then
-            return line_types.file
+            return types.line.file
         elseif word == '@data' then
-            return line_types.file
+            return types.line.file
         elseif word == '@version' then
-            return line_types.file
+            return types.line.file
         elseif word == '@brief' then
-            return line_types.brief
+            return types.line.brief
         elseif word == '@param[in]' or word == '@param[out]' or word == '@param[in|out]' then
-            return line_types.param
+            return types.line.param
         elseif word == '@li' then
-            return line_types.list_item
+            return types.line.list_item
         elseif word == '@retval' then
-            return line_types.retval
+            return types.line.retval
         elseif word == '@return' then
-            return line_types.return_
+            return types.line.return_
         elseif word == '@syntax' then
-            return line_types.syntax
+            return types.line.syntax
         elseif word == '@text' then
-            return line_types.text
+            return types.line.text
         elseif word == '@copyright' then
-            return line_types.copyright
+            return types.line.copyright
         elseif word == '@license' then
-            return line_types.license
+            return types.line.license
         end
     end
 
     if #words > 1 then
-        return line_types.text
+        return types.line.text
     end
 
-    return line_types.unknown
+    return types.line.unknown
 end
 
 function utils.split_into_words(sentence)

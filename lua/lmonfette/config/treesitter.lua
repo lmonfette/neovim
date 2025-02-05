@@ -113,6 +113,9 @@ local function init()
 end
 
 local function set_options()
+    -- start with the folds folded
+    vim.o.foldmethod = 'expr'
+    vim.o.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
 end
 
 local function set_remaps()

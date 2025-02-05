@@ -19,8 +19,8 @@ vim.keymap.set('n', '<S-A-Down>', ':m+<CR>==', { noremap = true, silent = true }
 vim.keymap.set('v', '<S-A-Up>', ":m '<-2<CR>gv=gv", { noremap = true, silent = true }) -- move a line up
 vim.keymap.set('v', '<S-A-Down>', ":m '>+<CR>gv=gv", { noremap = true, silent = true }) -- move a line down
 
-vim.keymap.set('n', '<S-E>', '"_dd') -- delete a line
-vim.keymap.set('v', '<S-E>', '"_d') -- delete a visual selection
+vim.keymap.set('n', '<S-E>', '"_ddk') -- delete a line
+vim.keymap.set('v', '<S-E>', '"_dk') -- delete a visual selection
 
 vim.keymap.set('v', '<C-->', '_') -- move cursor to the start of line
 vim.keymap.set('v', '<C-=>', '$<Left>') -- move cursor to the end of line
