@@ -194,7 +194,7 @@ local function order_file_sections(bufnr, start_row_index, end_row_index)
     utils.delete_lines(start_row, end_row)
 end
 
-local function remove_blank_lines_over_file_delimiters(bufnr, start_row_index, end_row_index)
+local function remove_blank_lines_after_file_delimiters(bufnr, start_row_index, end_row_index)
     local deleted_blank_line = true
     local section_delimiter_comments
     while deleted_blank_line do
@@ -207,14 +207,14 @@ local function remove_blank_lines_over_file_delimiters(bufnr, start_row_index, e
         end
 
         for i = #section_delimiter_comments, 1, -1 do
-            local line_nb = section_delimiter_comments[i][start_row_index] - 1
-            local line_over_delimiter = utils.get_line_from_row(line_nb)
+            local line_nb = section_delimiter_comments[i][start_row_index] + 1
+            local line_after_delimiter = utils.get_line_from_row(line_nb)
 
-            if #line_over_delimiter ~= 1 then
+            if #line_after_delimiter ~= 1 then
                 return
             end
 
-            if line_over_delimiter[1] == '' then
+            if line_after_delimiter[1] == '' then
                 deleted_blank_line = true
                 utils.delete_line(line_nb)
             end
@@ -222,7 +222,7 @@ local function remove_blank_lines_over_file_delimiters(bufnr, start_row_index, e
     end
 end
 
-local function add_whiteline_under_file_delimiter(bufnr, start_row_index, end_row_index)
+local function add_whiteline_before_file_delimiter(bufnr, start_row_index, end_row_index)
     local section_delimiter_comments = get_section_delimiter_comments(bufnr, start_row_index, end_row_index)
 
     if section_delimiter_comments == nil then
@@ -230,15 +230,15 @@ local function add_whiteline_under_file_delimiter(bufnr, start_row_index, end_ro
     end
 
     for i = #section_delimiter_comments, 1, -1 do
-        local line_nb = section_delimiter_comments[i][start_row_index] + 1
-        local line_under_delimiter = utils.get_line_from_row(line_nb)
+        local line_nb = section_delimiter_comments[i][start_row_index] - 1
+        local line_before_delimiter = utils.get_line_from_row(line_nb)
 
-        if #line_under_delimiter ~= 1 then
+        if #line_before_delimiter ~= 1 then
             return
         end
 
-        if line_under_delimiter[1] ~= '' then
-            utils.add_lines_over(line_nb, { '' })
+        if line_before_delimiter[1] ~= '' then
+            utils.add_lines_over(line_nb + 1, { '' })
         end
     end
 end
@@ -255,10 +255,10 @@ local function find_single_line_comment()
     order_file_sections(bufnr, start_row_index, end_row_index)
 
     -- make sure no delimiter has a blank space over
-    remove_blank_lines_over_file_delimiters(bufnr, start_row_index, end_row_index)
+    remove_blank_lines_after_file_delimiters(bufnr, start_row_index, end_row_index)
 
     -- make sure all delimiters have blank lines under
-    add_whiteline_under_file_delimiter(bufnr, start_row_index, end_row_index)
+    add_whiteline_before_file_delimiter(bufnr, start_row_index, end_row_index)
 end
 
 local function find_brief_comments()
