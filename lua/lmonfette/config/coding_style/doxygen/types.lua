@@ -21,18 +21,18 @@ types.line = {
 }
 
 types.file_section = {
-    includes = 0,
-    constants = 1,
-    macros = 2,
-    types = 3,
-    externs = 4,
-    public_globals = 5,
-    private_globals = 6,
-    public_function_prototypes = 7,
-    private_function_prototypes = 8,
-    public_functions = 9,
-    private_functions = 10,
-    unknown = 11,
+    unknown = 0,
+    includes = 1,
+    constants = 2,
+    macros = 3,
+    types = 4,
+    externs = 5,
+    public_globals = 6,
+    private_globals = 7,
+    public_function_prototypes = 8,
+    private_function_prototypes = 9,
+    public_functions = 10,
+    private_functions = 11,
 }
 
 types.file_section_keywords = {
@@ -46,7 +46,7 @@ types.file_section_keywords = {
     [types.file_section.public_function_prototypes] = '* PUBLIC FUNCTION PROTOTYPES *',
     [types.file_section.private_function_prototypes] = '* PRIVATE FUNCTION PROTOTYPES *',
     [types.file_section.public_functions] = '* PUBLIC FUNCTIONS *',
-    [types.file_section.private_function_prototypes] = '* PRIVATE FUNCTIONS *',
+    [types.file_section.private_functions] = '* PRIVATE FUNCTIONS *',
 }
 
 return types

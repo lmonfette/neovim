@@ -1,3 +1,4 @@
+local logging = require('lmonfette/logging')
 local types = require('lmonfette/config/coding_style/doxygen/types')
 local utils = {}
 
@@ -41,14 +42,71 @@ function utils.format_sentence_grammar(first_word_index, words)
     words[#words] = utils.ensure_period(words[#words])
 end
 
+function utils.append_lines(new_lines)
+    local bufnr = vim.api.nvim_get_current_buf()
+    local last_line_index = vim.api.nvim_buf_line_count(bufnr)
+    vim.api.nvim_buf_set_lines(bufnr, last_line_index, last_line_index, false, new_lines)
+end
+
+function utils.add_lines_over(line, new_lines)
+    local bufnr = vim.api.nvim_get_current_buf()
+    vim.api.nvim_buf_set_lines(bufnr, line, line, false, new_lines)
+end
+
 function utils.replace_lines(start_line, end_line, new_lines)
-    local bufnr = vim.api.nvim_get_current_buf() -- Get the current buffer
+    local bufnr = vim.api.nvim_get_current_buf()
     vim.api.nvim_buf_set_lines(bufnr, start_line, end_line, false, new_lines)
 end
 
 function utils.delete_line(line_number)
-    local bufnr = vim.api.nvim_get_current_buf() -- Get the current buffer
-    vim.api.nvim_buf_set_lines(bufnr, line_number - 1, line_number, false, {})
+    local bufnr = vim.api.nvim_get_current_buf()
+    vim.api.nvim_buf_set_lines(bufnr, line_number, line_number + 1, false, {})
+end
+
+function utils.delete_lines(start_line, end_line)
+    local bufnr = vim.api.nvim_get_current_buf()
+    vim.api.nvim_buf_set_lines(bufnr, start_line, end_line, false, {})
+end
+
+function utils.reorder_file_sections(file_sections)
+    local file_section_index = 2
+
+    -- build an array of to hold all the ordered file sections
+    local preliminary_ordered_file_sections = {}
+    for _ = 1, #types.file_section - 1 do
+        preliminary_ordered_file_sections[#preliminary_ordered_file_sections + 1] = nil
+    end
+
+    for _, file_section in ipairs(file_sections) do
+        -- write (or overwrite) the file section
+        if preliminary_ordered_file_sections[file_section[file_section_index]] ~= nil then
+            logging.error(
+                'The file section '
+                    .. tostring(types.file_section_keywords[file_section[file_section_index]])
+                    .. ' is present twice.'
+            )
+            return nil
+        end
+        preliminary_ordered_file_sections[file_section[file_section_index]] = file_section
+    end
+
+    local ordered_file_sections = {}
+    for _, preliminary_ordered_file_section in ipairs(preliminary_ordered_file_sections) do
+        -- collect the file sections that are present
+        if preliminary_ordered_file_section then
+            ordered_file_sections[#ordered_file_sections + 1] = preliminary_ordered_file_section
+        end
+    end
+
+    -- if these to array sizes are not equal, it means we overwrote a file section,
+    -- in that case, some file section was present twice of more times
+    print('#ordered_file_sections = ' .. tostring(#ordered_file_sections))
+    print('#file_sections = ' .. tostring(#file_sections))
+    if #ordered_file_sections ~= #file_sections then
+        return nil
+    end
+
+    return ordered_file_sections
 end
 
 function utils.contains_statement_type(stmt_types, the_statement_type)
@@ -61,8 +119,8 @@ function utils.contains_statement_type(stmt_types, the_statement_type)
 end
 
 function utils.extract_file_section(line)
-    for _, file_section in ipairs(types.file_section) do
-        if line.find(types.file_section_keywords[file_section]) then
+    for file_section, file_section_string in pairs(types.file_section_keywords) do
+        if line:find(file_section_string) then
             return file_section
         end
     end
@@ -153,6 +211,56 @@ end
 function utils.create_spaces(word, longest_word, spaces_between)
     local nb_spaces = longest_word - word:len() + spaces_between
     return utils.create_spaces_string(nb_spaces)
+end
+
+function utils.get_comment_nodes()
+    local bufnr = vim.api.nvim_get_current_buf()
+    local parser = vim.treesitter.get_parser(bufnr, vim.bo.filetype)
+    local tree = parser:parse()[1]
+    local root = tree:root()
+
+    local comment_nodes = {}
+
+    -- Recursively find comment nodes
+    local function find_comments(node)
+        for child in node:iter_children() do
+            local type = child:type()
+            if type == 'comment' then
+                table.insert(comment_nodes, child)
+            else
+                find_comments(child)
+            end
+        end
+    end
+
+    find_comments(root)
+
+    return comment_nodes
+end
+
+function utils.get_lines_from_row_range(start_row, end_row)
+    local bufnr = vim.api.nvim_get_current_buf()
+
+    local lines = vim.api.nvim_buf_get_lines(bufnr, start_row, end_row, false)
+
+    return lines
+end
+
+function utils.get_line_from_row(row)
+    local bufnr = vim.api.nvim_get_current_buf()
+
+    local lines = vim.api.nvim_buf_get_lines(bufnr, row, row + 1, false)
+
+    return lines
+end
+
+function utils.get_lines_from_node(node)
+    local bufnr = vim.api.nvim_get_current_buf()
+    local start_row, start_col, end_row, end_col = node:range()
+
+    local lines = vim.api.nvim_buf_get_text(bufnr, start_row, start_col, end_row, end_col, {})
+
+    return lines
 end
 
 return utils

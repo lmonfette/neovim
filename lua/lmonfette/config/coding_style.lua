@@ -11,8 +11,8 @@ local function reorder_file_sections(line)
     -- 2. make a list of all the line number for each section number
 
     -- 3. with some brain logic, find the ending
-        -- 3.1 if there is a next section, take the next section's line number - 1
-        -- 3.2 else, it's the last, so take the last line
+    -- 3.1 if there is a next section, take the next section's line number - 1
+    -- 3.2 else, it's the last, so take the last line
 
     -- 4. copy the sections of text of the files and keep them in memory but in the desired order
 
@@ -136,45 +136,129 @@ local function format_doygen_comments(lines, whitespaces)
     return replace and final_lines or nil
 end
 
-local function find_single_line_comment()
-    local bufnr = vim.api.nvim_get_current_buf()
-    local parser = vim.treesitter.get_parser(bufnr, vim.bo.filetype)
-    local tree = parser:parse()[1]
-    local root = tree:root()
-
-    local comment_nodes = {}
-
-    -- Recursively find comment nodes
-    local function find_comments(node)
-        for child in node:iter_children() do
-            local type = child:type()
-            if type == 'comment' then
-                table.insert(comment_nodes, child)
-            else
-                find_comments(child)
-            end
-        end
-    end
-
-    find_comments(root)
-    local lines_to_remove = {}
+local function get_section_delimiter_comments(bufnr, start_row_index, end_row_index)
+    local comment_nodes = utils.get_comment_nodes()
+    local section_delimiter_comments = {}
 
     for _, comment_node in ipairs(comment_nodes) do
-        local start_row, start_col, end_row, end_col = comment_node:range()
+        local lines = utils.get_lines_from_node(comment_node)
 
-        if start_row == end_row then
-            -- Extract the text Sor the comment
-            local lines = vim.api.nvim_buf_get_text(bufnr, start_row, start_col, end_row, end_col, {})
-
-            if #lines == 1 then
-                reorder_file_sections(lines[1])
+        if #lines == 1 then
+            local file_section = utils.extract_file_section(lines[1])
+            if file_section ~= types.file_section.unknown then
+                local start_row, _, _, _ = comment_node:range()
+                section_delimiter_comments[#section_delimiter_comments + 1] =
+                    { comment_node, file_section, start_row, 0 }
             end
         end
     end
 
-    for i = #lines_to_remove, 1, -1 do
-        utils.delete_line(lines_to_remove[i])
+    if #section_delimiter_comments == 0 then
+        return nil
     end
+
+    for i = 2, #section_delimiter_comments do
+        section_delimiter_comments[i - 1][end_row_index] = section_delimiter_comments[i][start_row_index] - 1
+    end
+
+    section_delimiter_comments[#section_delimiter_comments][end_row_index] = vim.api.nvim_buf_line_count(bufnr) - 1
+
+    return section_delimiter_comments
+end
+
+local function order_file_sections(bufnr, start_row_index, end_row_index)
+    local section_delimiter_comments = get_section_delimiter_comments(bufnr, start_row_index, end_row_index)
+
+    if section_delimiter_comments == nil then
+        return
+    end
+
+    local ordered_file_sections = utils.reorder_file_sections(section_delimiter_comments)
+    if ordered_file_sections == nil then
+        return
+    end
+
+    local start_row
+    local end_row
+
+    for _, ordered_file_section in ipairs(ordered_file_sections) do
+        start_row = ordered_file_section[start_row_index]
+        end_row = ordered_file_section[end_row_index] + 1 -- need to add one line for the vim api function to work
+        local lines = utils.get_lines_from_row_range(start_row, end_row)
+        utils.append_lines(lines)
+    end
+
+    start_row = section_delimiter_comments[1][start_row_index]
+    end_row = section_delimiter_comments[#section_delimiter_comments][end_row_index] + 1 -- need to add one line
+
+    utils.delete_lines(start_row, end_row)
+end
+
+local function remove_blank_lines_over_file_delimiters(bufnr, start_row_index, end_row_index)
+    local deleted_blank_line = true
+    local section_delimiter_comments
+    while deleted_blank_line do
+        deleted_blank_line = false
+
+        section_delimiter_comments = get_section_delimiter_comments(bufnr, start_row_index, end_row_index)
+
+        if section_delimiter_comments == nil then
+            return
+        end
+
+        for i = #section_delimiter_comments, 1, -1 do
+            local line_nb = section_delimiter_comments[i][start_row_index] - 1
+            local line_over_delimiter = utils.get_line_from_row(line_nb)
+
+            if #line_over_delimiter ~= 1 then
+                return
+            end
+
+            if line_over_delimiter[1] == '' then
+                deleted_blank_line = true
+                utils.delete_line(line_nb)
+            end
+        end
+    end
+end
+
+local function add_whiteline_under_file_delimiter(bufnr, start_row_index, end_row_index)
+    local section_delimiter_comments = get_section_delimiter_comments(bufnr, start_row_index, end_row_index)
+
+    if section_delimiter_comments == nil then
+        return
+    end
+
+    for i = #section_delimiter_comments, 1, -1 do
+        local line_nb = section_delimiter_comments[i][start_row_index] + 1
+        local line_under_delimiter = utils.get_line_from_row(line_nb)
+
+        if #line_under_delimiter ~= 1 then
+            return
+        end
+
+        if line_under_delimiter[1] ~= '' then
+            utils.add_lines_over(line_nb, { '' })
+        end
+    end
+end
+
+local function find_single_line_comment()
+    local bufnr = vim.api.nvim_get_current_buf()
+
+    -- local comment_node_index = 1
+    -- local file_section_index = 2
+    local start_row_index = 3
+    local end_row_index = 4
+
+    -- order the file sections
+    order_file_sections(bufnr, start_row_index, end_row_index)
+
+    -- make sure no delimiter has a blank space over
+    remove_blank_lines_over_file_delimiters(bufnr, start_row_index, end_row_index)
+
+    -- make sure all delimiters have blank lines under
+    add_whiteline_under_file_delimiter(bufnr, start_row_index, end_row_index)
 end
 
 local function find_brief_comments()
@@ -228,7 +312,7 @@ local function find_brief_comments()
 end
 
 local function init()
-    vim.keymap.set('n', '<leader>fc', function()
+    vim.keymap.set('n', '<leader>cs', function()
         find_brief_comments()
         find_single_line_comment()
     end, {}) -- find a file by name opened root directory
