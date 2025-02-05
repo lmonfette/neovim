@@ -9,7 +9,9 @@ local longest_id_index = 3
 local formatter = {}
 
 local function format_unknown_line(line, words, lmd)
-    logging.error("The unknown line type '" .. "' can't be handled")
+    if line ~= '' then
+        logging.error("The unknown line type '" .. "' can't be handled")
+    end
     return line
 end
 
@@ -84,6 +86,7 @@ local function format_param_line(line, words, lmd)
     end
 
     -- format the spaces
+    spacers[1] = '  '
     spacers[2] = utils.create_spaces(words[2], lmd[longest_tag_index], 2)
     spacers[3] = utils.create_spaces(words[3], lmd[longest_id_index], 2)
     spacers[#spacers] = ''
@@ -137,6 +140,7 @@ local function format_retval_line(line, words, lmd)
         spacers[i] = ' '
     end
 
+    spacers[1] = '  '
     spacers[2] = utils.create_spaces(words[2], lmd[longest_tag_index], 2)
     spacers[3] = utils.create_spaces(words[3], lmd[longest_id_index], 2)
     spacers[#spacers] = ''
@@ -163,8 +167,9 @@ local function format_return_line(line, words, lmd)
         spacers[i] = ' '
     end
 
+    spacers[1] = '  '
     spacers[2] = utils.create_spaces(words[2], lmd[longest_tag_index], 2)
-    spacers[2] = utils.create_spaces('', lmd[longest_id_index], 2)
+    spacers[2] = spacers[2] .. utils.create_spaces('', lmd[longest_id_index], 2)
     spacers[#spacers] = ''
 
     utils.format_sentence_grammar(3, words)
@@ -189,6 +194,7 @@ local function format_syntax_line(line, words, lmd)
         spacers[i] = ' '
     end
 
+    spacers[1] = '  '
     spacers[2] = utils.create_spaces(words[2], lmd[longest_tag_index], 2)
     spacers[2] = spacers[2] .. utils.create_spaces('', lmd[longest_id_index], 2)
     spacers[#spacers] = ''

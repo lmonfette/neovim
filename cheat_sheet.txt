@@ -55,3 +55,70 @@ To check which options are set from their different values, do the command:
 
 :help user-manual
 :Tutor
+
+---------- other -------------
+
+1. pressing ":" when selecting multiple line will apply a command on all those line. ex:
+
+:'<,'>d will delete all the lines
+:'<,'>y will yank all the lines
+:'<,'>norm A"; will move the cursor at the end of all the lines, enter insert mode and then write ";
+
+2. hovering a number and pressing <C-a> will increase the number
+
+try it: 3, 43, 102
+
+3. hovering a number and pressing <C-x> will decrease the number
+
+try it: 5, 42, 101
+
+4. <C-a> jumps to the next number and increments is, <C-x> jumps to it and decrements it
+
+word word words 2, some other words 4
+
+5. selecting all the lines containing some number and then pressing <g-C-a> will order them
+
+try it:
+
+0.
+0.
+0.
+
+gives:
+
+1.
+2.
+3.
+
+6. daw -> delete a word, diw -> delete inner word, ciw -> change a word, but:
+
+if there is a text like this:
+
+[({"hello"})]
+
+I can do: ci", ci}, ci) or ci] and if will change everything inside those delimiters.
+You can also write the opening or closing [/]. it does not matter
+
+- ci}
+- va}
+- vi}
+
+try it:
+
+[({"hello"})]
+
+7. W jumps to the next word (instead of just the next word or delimiter), you can combine it:
+
+jump to hello from beginning of the beginning of the line:
+
+salut:salut hello yolo
+
+don't forget that you can use actions like this:
+
+- vW
+- dW
+- diW
+
+try it:
+
+salut:salut hello yolo

@@ -35,9 +35,20 @@ local function format_doygen_comments(lines, whitespaces)
             longest_tag = tag_len > longest_tag and tag_len or longest_tag
             longest_id = id_len > longest_id and id_len or longest_id
         end
-        if stmt_types[i] == line_types.syntax or stmt_types[i] == line_types.return_ then
+        if
+            stmt_types[i] == line_types.syntax
+            or stmt_types[i] == line_types.return_
+            or stmt_types[i] == line_types.brief
+        then
             replace = true
         end
+    end
+
+    if
+        utils.contains_statement_type(stmt_types, line_types.brief)
+        and utils.contains_statement_type(stmt_types, line_types.file)
+    then
+        replace = false
     end
 
     for i, words in ipairs(words_array) do
@@ -73,7 +84,7 @@ local function format_doygen_comments(lines, whitespaces)
     local lines_indices_to_remove = {}
 
     for i, stmt_type in ipairs(stmt_types) do
-        if stmt_type == line_types.empty or stmt_type == line_types.text or stmt_type == line_types.start then
+        if stmt_type == line_types.empty or stmt_type == line_types.start then
             lines_indices_to_remove[#lines_indices_to_remove + 1] = i
         else
             break
