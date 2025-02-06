@@ -100,8 +100,6 @@ function utils.reorder_file_sections(file_sections)
 
     -- if these to array sizes are not equal, it means we overwrote a file section,
     -- in that case, some file section was present twice of more times
-    print('#ordered_file_sections = ' .. tostring(#ordered_file_sections))
-    print('#file_sections = ' .. tostring(#file_sections))
     if #ordered_file_sections ~= #file_sections then
         return nil
     end
@@ -206,6 +204,10 @@ function utils.create_spaces_string(nb_spaces)
         spaces = spaces .. ' '
     end
     return spaces
+end
+
+function utils.calculate_id_and_description_space_nb(longest_id_length)
+    return longest_id_length == 0 and 1 or 2
 end
 
 function utils.create_spaces(word, longest_word, spaces_between)

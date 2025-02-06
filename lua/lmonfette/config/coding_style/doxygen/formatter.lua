@@ -87,7 +87,7 @@ local function format_param_line(line, words, lmd)
 
     -- format the spaces
     spacers[1] = '  '
-    spacers[2] = utils.create_spaces(words[2], lmd[longest_tag_index], 2)
+    spacers[2] = utils.create_spaces(words[2], lmd[longest_tag_index], 1)
     spacers[3] = utils.create_spaces(words[3], lmd[longest_id_index], 2)
     spacers[#spacers] = ''
 
@@ -141,7 +141,7 @@ local function format_retval_line(line, words, lmd)
     end
 
     spacers[1] = '  '
-    spacers[2] = utils.create_spaces(words[2], lmd[longest_tag_index], 2)
+    spacers[2] = utils.create_spaces(words[2], lmd[longest_tag_index], 1)
     spacers[3] = utils.create_spaces(words[3], lmd[longest_id_index], 2)
     spacers[#spacers] = ''
 
@@ -168,8 +168,13 @@ local function format_return_line(line, words, lmd)
     end
 
     spacers[1] = '  '
-    spacers[2] = utils.create_spaces(words[2], lmd[longest_tag_index], 2)
-    spacers[2] = spacers[2] .. utils.create_spaces('', lmd[longest_id_index], 2)
+    spacers[2] = utils.create_spaces(words[2], lmd[longest_tag_index], 1)
+    spacers[2] = spacers[2]
+        .. utils.create_spaces(
+            '',
+            lmd[longest_id_index],
+            utils.calculate_id_and_description_space_nb(lmd[longest_id_index])
+        )
     spacers[#spacers] = ''
 
     utils.format_sentence_grammar(3, words)
@@ -195,8 +200,13 @@ local function format_syntax_line(line, words, lmd)
     end
 
     spacers[1] = '  '
-    spacers[2] = utils.create_spaces(words[2], lmd[longest_tag_index], 2)
-    spacers[2] = spacers[2] .. utils.create_spaces('', lmd[longest_id_index], 2)
+    spacers[2] = utils.create_spaces(words[2], lmd[longest_tag_index], 1)
+    spacers[2] = spacers[2]
+        .. utils.create_spaces(
+            '',
+            lmd[longest_id_index],
+            utils.calculate_id_and_description_space_nb(lmd[longest_id_index])
+        )
     spacers[#spacers] = ''
 
     utils.format_sentence_grammar(3, words)
