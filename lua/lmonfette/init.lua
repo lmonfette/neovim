@@ -10,6 +10,7 @@ vim.g.mapleader = ' ' -- set the leader variable to be a space
 vim.g.maplocalleader = '\\'
 
 vim.o.wrap = false
+vim.o.scrolloff = 15
 
 -- please install nerd fonts on you computer: https://github.com/ryanoasis/nerd-fonts.git
 
@@ -24,6 +25,8 @@ vim.keymap.set('v', '<S-E>', '"_dk') -- delete a visual selection
 
 vim.keymap.set('v', '<C-->', '_') -- move cursor to the start of line
 vim.keymap.set('v', '<C-=>', '$<Left>') -- move cursor to the end of line
+
+vim.keymap.set('n', '<leader>mcc', ':! jq -s add ./**/compile_commands.json > compile_commands.json<CR>')
 
 -- to get used to neovim
 vim.keymap.set('n', '<Left>', function()

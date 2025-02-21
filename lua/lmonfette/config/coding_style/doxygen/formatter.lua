@@ -32,7 +32,19 @@ local function format_version_line(line, words, lmd)
 end
 
 local function format_text_line(line, words, lmd)
-    return line
+    local spacers = {}
+    for i, _ in ipairs(words) do
+        spacers[i] = ' '
+    end
+    spacers[1] = '  '
+
+    local new_line = ''
+
+    for i = 1, #words do
+        new_line = new_line .. words[i] .. spacers[i]
+    end
+
+    return new_line
 end
 
 local function format_copyright_line(line, words, lmd)
@@ -63,7 +75,7 @@ local function format_brief_line(line, words, lmd)
         words[1] = '/**'
     end
 
-    utils.format_sentence_grammar(3, words)
+    utils.format_sentence_grammar(3, #words, words)
 
     local new_line = ''
 
@@ -91,7 +103,7 @@ local function format_param_line(line, words, lmd)
     spacers[3] = utils.create_spaces(words[3], lmd[longest_id_index], 2)
     spacers[#spacers] = ''
 
-    utils.format_sentence_grammar(4, words)
+    utils.format_sentence_grammar(4, #words, words)
 
     local new_line = ' '
 
@@ -118,7 +130,7 @@ local function format_list_item_line(line, words, lmd)
     spacers[3] = utils.create_spaces(words[3], lmd[longest_id_index], 2)
     spacers[#spacers] = ''
 
-    utils.format_sentence_grammar(4, words)
+    utils.format_sentence_grammar(4, #words, words)
 
     local new_line = ' '
 
@@ -145,7 +157,7 @@ local function format_retval_line(line, words, lmd)
     spacers[3] = utils.create_spaces(words[3], lmd[longest_id_index], 2)
     spacers[#spacers] = ''
 
-    utils.format_sentence_grammar(4, words)
+    utils.format_sentence_grammar(4, #words, words)
 
     local new_line = ' '
 
@@ -177,7 +189,7 @@ local function format_return_line(line, words, lmd)
         )
     spacers[#spacers] = ''
 
-    utils.format_sentence_grammar(3, words)
+    utils.format_sentence_grammar(3, #words, words)
 
     local new_line = ' '
 
@@ -209,7 +221,7 @@ local function format_syntax_line(line, words, lmd)
         )
     spacers[#spacers] = ''
 
-    utils.format_sentence_grammar(3, words)
+    utils.format_sentence_grammar(3, #words, words)
 
     local new_line = ' '
 

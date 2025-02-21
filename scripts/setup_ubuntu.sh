@@ -24,7 +24,7 @@ sudo apt install -y ruby
 # install luarocks (package manager used by neovim)
 sudo apt install -y luarocks
 
-# install 
+# install
 sudo apt install -y tree-sitter-cli
 
 # install ripgrep (tool used by the telescope fuzzy finder)
@@ -57,6 +57,9 @@ sudo app install -y wget
 
 # install zsh
 sudo apt install -y zsh
+
+# install jq
+sudo apt install -y jq
 
 # install oh-my-zsh
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"

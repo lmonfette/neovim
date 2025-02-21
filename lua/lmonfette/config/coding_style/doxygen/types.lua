@@ -20,6 +20,8 @@ types.line = {
     end_ = 16,
 }
 
+types.nb_line_types = 16
+
 types.file_section = {
     unknown = 0,
     includes = 1,
@@ -34,6 +36,8 @@ types.file_section = {
     public_functions = 10,
     private_functions = 11,
 }
+
+types.nb_file_section_types = 11
 
 types.file_section_keywords = {
     [types.file_section.includes] = '* INCLUDES *',

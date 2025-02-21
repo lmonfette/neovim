@@ -37,9 +37,9 @@ function utils.ensure_period(str)
     return str
 end
 
-function utils.format_sentence_grammar(first_word_index, words)
+function utils.format_sentence_grammar(first_word_index, last_word_index, words)
     words[first_word_index] = utils.capitalize_first_letter(words[first_word_index])
-    words[#words] = utils.ensure_period(words[#words])
+    words[last_word_index] = utils.ensure_period(words[last_word_index])
 end
 
 function utils.append_lines(new_lines)
@@ -73,13 +73,13 @@ function utils.reorder_file_sections(file_sections)
 
     -- build an array of to hold all the ordered file sections
     local preliminary_ordered_file_sections = {}
-    for _ = 1, #types.file_section - 1 do
-        preliminary_ordered_file_sections[#preliminary_ordered_file_sections + 1] = nil
+    for _ = 1, types.nb_file_section_types do
+        preliminary_ordered_file_sections[#preliminary_ordered_file_sections + 1] = false
     end
 
     for _, file_section in ipairs(file_sections) do
         -- write (or overwrite) the file section
-        if preliminary_ordered_file_sections[file_section[file_section_index]] ~= nil then
+        if preliminary_ordered_file_sections[file_section[file_section_index]] ~= false then
             logging.error(
                 'The file section '
                     .. tostring(types.file_section_keywords[file_section[file_section_index]])
@@ -101,6 +101,12 @@ function utils.reorder_file_sections(file_sections)
     -- if these to array sizes are not equal, it means we overwrote a file section,
     -- in that case, some file section was present twice of more times
     if #ordered_file_sections ~= #file_sections then
+        logging.error(
+            'reorder_file_sections: nb_file_sections = '
+                .. tostring(#ordered_file_sections)
+                .. ' != nb_file_sections = '
+                .. tostring(#file_sections)
+        )
         return nil
     end
 
@@ -118,7 +124,7 @@ end
 
 function utils.extract_file_section(line)
     for file_section, file_section_string in pairs(types.file_section_keywords) do
-        if line:find(file_section_string) then
+        if line:find(file_section_string, 1, true) then
             return file_section
         end
     end
@@ -174,12 +180,36 @@ function utils.extract_line_type(words)
     return types.line.unknown
 end
 
+function utils.get_sentence_spaces(sentence)
+    local whitespaces = {}
+    local current_space = ''
+
+    for i = 1, #sentence do
+        local char = string.sub(sentence, i, i)
+
+        if char ~= ' ' then
+            if current_space ~= '' then
+                table.insert(whitespaces, current_space)
+                current_space = ''
+            end
+        else
+            current_space = current_space .. char
+        end
+    end
+
+    if current_space ~= '' then
+        table.insert(whitespaces, current_space)
+    end
+
+    return whitespaces
+end
+
 function utils.split_into_words(sentence)
     local words = {}
     local current_word = ''
 
     for i = 1, #sentence do
-        local char = string.sub(sentence, i, i) -- Or just sentence[i] in Lua 5.3+
+        local char = string.sub(sentence, i, i)
 
         if char == ' ' then
             if current_word ~= '' then -- Check for empty words due to multiple spaces
@@ -215,19 +245,19 @@ function utils.create_spaces(word, longest_word, spaces_between)
     return utils.create_spaces_string(nb_spaces)
 end
 
-function utils.get_comment_nodes()
+function utils.get_nodes_from_type(type, root_node)
     local bufnr = vim.api.nvim_get_current_buf()
     local parser = vim.treesitter.get_parser(bufnr, vim.bo.filetype)
     local tree = parser:parse()[1]
-    local root = tree:root()
+    local root = root_node ~= nil and root_node or tree:root()
 
     local comment_nodes = {}
 
     -- Recursively find comment nodes
     local function find_comments(node)
         for child in node:iter_children() do
-            local type = child:type()
-            if type == 'comment' then
+            local child_type = child:type()
+            if child_type == type then
                 table.insert(comment_nodes, child)
             else
                 find_comments(child)
@@ -263,6 +293,20 @@ function utils.get_lines_from_node(node)
     local lines = vim.api.nvim_buf_get_text(bufnr, start_row, start_col, end_row, end_col, {})
 
     return lines
+end
+
+function utils.is_doxygen_file_header_present()
+    local file_string = '/** @file '
+    local bufnr = vim.api.nvim_get_current_buf()
+    local lines = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)
+
+    for _, line in ipairs(lines) do
+        if line:find(file_string, 1, true) then
+            return true
+        end
+    end
+
+    return false
 end
 
 return utils

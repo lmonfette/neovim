@@ -1,3 +1,4 @@
+local logging = require('lmonfette/logging')
 local types = require('lmonfette/config/coding_style/doxygen/types')
 local utils = require('lmonfette/config/coding_style/doxygen/utils')
 local formatter = require('lmonfette/config/coding_style/doxygen/formatter')
@@ -137,7 +138,7 @@ local function format_doygen_comments(lines, whitespaces)
 end
 
 local function get_section_delimiter_comments(bufnr, start_row_index, end_row_index)
-    local comment_nodes = utils.get_comment_nodes()
+    local comment_nodes = utils.get_nodes_from_type('comment', nil)
     local section_delimiter_comments = {}
 
     for _, comment_node in ipairs(comment_nodes) do
@@ -170,11 +171,13 @@ local function order_file_sections(bufnr, start_row_index, end_row_index)
     local section_delimiter_comments = get_section_delimiter_comments(bufnr, start_row_index, end_row_index)
 
     if section_delimiter_comments == nil then
+        logging.error('order_file_sections: section_delimiter_comments is nil')
         return
     end
 
     local ordered_file_sections = utils.reorder_file_sections(section_delimiter_comments)
     if ordered_file_sections == nil then
+        logging.error('order_file_sections: ordered_file_sections is nil')
         return
     end
 
@@ -261,6 +264,88 @@ local function find_single_line_comment()
     add_whiteline_before_file_delimiter(bufnr, start_row_index, end_row_index)
 end
 
+local function ensure_proper_comment_style_for_inner_named_field(name)
+    local bufnr = vim.api.nvim_get_current_buf()
+
+    -- local comment_node_index = 1
+    -- local file_section_index = 2
+    local start_row_index = 3
+    local end_row_index = 4
+
+    -- get named field nodes
+    local named_field_nodes = utils.get_nodes_from_type(name)
+
+    local comment_nodes = {}
+
+    for _, named_field_node in ipairs(named_field_nodes) do
+        local named_field_node_comment_nodes = utils.get_nodes_from_type('comment', named_field_node)
+
+        if named_field_node_comment_nodes and #named_field_node_comment_nodes > 0 then
+            table.move(
+                named_field_node_comment_nodes,
+                1,
+                #named_field_node_comment_nodes,
+                #comment_nodes + 1,
+                comment_nodes
+            )
+        end
+    end
+
+    local named_field_field_comments = {}
+    local one_line_comment_nodes = {}
+
+    for _, comment_node in ipairs(comment_nodes) do
+        local start_row, _, end_row, _ = comment_node:range()
+
+        if start_row == end_row then
+            local lines = utils.get_line_from_row(start_row)
+
+            if lines and #lines == 1 then
+                table.move(lines, 1, #lines, #named_field_field_comments + 1, named_field_field_comments)
+                table.insert(one_line_comment_nodes, comment_node)
+            end
+        end
+    end
+
+    for i, line in ipairs(named_field_field_comments) do
+        if #line > 0 then
+            local spaces = utils.get_sentence_spaces(line)
+            local words = utils.split_into_words(line)
+
+            if #spaces > 0 and #words > 0 then
+                local char_to_append = {}
+
+                if words[1] == '/*' then
+                    words[1] = '/*!'
+                end
+                utils.format_sentence_grammar(2, #words - 1, words)
+
+                if string.sub(line, 1, 1) == ' ' then
+                    char_to_append[1] = spaces
+                    char_to_append[2] = words
+                else
+                    char_to_append[1] = words
+                    char_to_append[2] = spaces
+                end
+
+                local new_line = ''
+
+                for j, _ in ipairs(char_to_append[1]) do
+                    new_line = new_line .. char_to_append[1][j] .. char_to_append[2][j]
+                end
+                named_field_field_comments[i] = new_line
+            end
+        end
+    end
+
+    for i = #one_line_comment_nodes, 1, -1 do
+        local line_nb, _, _, _ = one_line_comment_nodes[i]:range()
+
+        utils.delete_line(line_nb)
+        utils.add_lines_over(line_nb, { named_field_field_comments[i] })
+    end
+end
+
 local function find_brief_comments()
     local bufnr = vim.api.nvim_get_current_buf()
     local parser = vim.treesitter.get_parser(bufnr, vim.bo.filetype)
@@ -311,10 +396,48 @@ local function find_brief_comments()
     end
 end
 
+local function ensure_proper_file_name_related_tags()
+    local bufnr = vim.api.nvim_get_current_buf()
+    local lines = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)
+    local buf_name = vim.api.nvim_buf_get_name(0)
+    local extension = vim.fn.fnamemodify(buf_name, ':e')
+
+    if utils.is_doxygen_file_header_present() == false then
+        logging.error('File header is missing.')
+        return
+    end
+
+    --[[ local file_name_string = '/** @file '
+
+    local nb_if_required_header_guards_lines = extension == '.h' and 3 or 0 -- "_H_" lines
+    local file_name_is_present = false
+
+    if #lines > 0 then
+        if utils.is_doxygen_file_header_present() then
+        else
+        end
+    else
+        return
+    end
+
+    for _, line in ipairs(lines) do
+        if line:find(file_string, 1, true) then
+            return
+        elseif line:find(file_string, 1, true) then
+            return
+        elseif line:find(file_string, 1, true) then
+            return
+        end
+    end ]]
+end
+
 local function init()
     vim.keymap.set('n', '<leader>cs', function()
         find_brief_comments()
         find_single_line_comment()
+        ensure_proper_file_name_related_tags()
+        ensure_proper_comment_style_for_inner_named_field('struct_specifier')
+        ensure_proper_comment_style_for_inner_named_field('enum_specifier')
     end, {}) -- find a file by name opened root directory
 end
 
