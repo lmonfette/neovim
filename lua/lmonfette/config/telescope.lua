@@ -22,6 +22,16 @@ local function init()
                     ['<C-h>'] = 'which_key',
                 },
             },
+            vimgrep_arguments = {
+                'rg',
+                '--color=never',
+                '--no-heading',
+                '--with-filename',
+                '--line-number',
+                '--column',
+                '--smart-case',
+                '--hidden',
+            },
         },
         pickers = {
             -- Default configuration for builtin pickers goes here:
@@ -47,8 +57,13 @@ local function set_options() end
 
 local function set_remaps()
     local builtin = require('telescope.builtin')
-    vim.keymap.set('n', '<leader>ff', builtin.find_files, { desc = 'Telescope find files' }) -- find a file by name opened root directory
-    vim.keymap.set('n', '<leader>fg', builtin.live_grep, { desc = 'Telescope live grep' }) -- find a file by greping in it
+    -- vim.keymap.set('n', '<leader>ff', builtin.find_files, { desc = 'Telescope find files' }) -- find a file by name opened root directory
+    vim.keymap.set('n', '<leader>ff', function()
+        builtin.find_files({ hidden = true })
+    end, { desc = 'Telescope find files' }) -- find a file by name opened root directory
+    vim.keymap.set('n', '<leader>fg', function()
+        builtin.live_grep({ hidden = true })
+    end, { desc = 'Telescope live grep' }) -- find a file by greping in it
     vim.keymap.set('n', '<leader>fb', builtin.buffers, { desc = 'Telescope buffers' }) -- find a file from the opened buffers
     vim.keymap.set('n', '<leader>fh', builtin.help_tags, { desc = 'Telescope help tags' }) -- find a help menu
 end

@@ -24,7 +24,7 @@ sudo apt install -y ruby
 # install luarocks (package manager used by neovim)
 sudo apt install -y luarocks
 
-# install
+# install tree-sitter-cli
 sudo apt install -y tree-sitter-cli
 
 # install ripgrep (tool used by the telescope fuzzy finder)
@@ -35,6 +35,9 @@ sudo apt install -y fd-find
 #create a symlink for fd to be used
 rm /usr/bin/fd
 sudo ln -s "$(which fdfind)" /usr/bin/fd
+
+# install xournal (PDF editing)
+sudo apt install -y xournalpp
 
 # install pip3
 sudo apt install -y python3-pip
@@ -60,6 +63,9 @@ sudo apt install -y zsh
 
 # install jq
 sudo apt install -y jq
+
+# install tmux
+sudo apt install -y tmux
 
 # install oh-my-zsh
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
