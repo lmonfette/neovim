@@ -3,15 +3,13 @@ local mason = require('mason')
 local logging = require('lmonfette/logging')
 -- lsps
 local mason_lspconfig = require('mason-lspconfig')
-local package_to_lspconfig = require('mason-lspconfig.mappings.server').package_to_lspconfig
-local lspconfig_to_package = require('mason-lspconfig.mappings.server').lspconfig_to_package
+
 -- daps
 local mason_dap = require('mason-nvim-dap')
 local package_to_nvim_dap = require('mason-nvim-dap.mappings.source').package_to_nvim_dap
 -- linters
 local mason_lint = require('mason-nvim-lint')
 local nvim_lint = require('lint')
-local package_to_nvimlint = require('mason-nvim-lint.mapping').package_to_nvimlint
 -- formatters
 local formatter = require('formatter')
 local formatter_util = require('formatter.util')
@@ -20,9 +18,19 @@ local function mason_lsps_to_nvim_lsps(package_list)
     local package_list_length = #package_list
     local nvim_package_list = {}
 
+    -- These absolutely need to be called after mason has been setup, otherwise, the table is not valid
+    local package_to_lspconfig = require('mason-lspconfig.mappings').get_mason_map().package_to_lspconfig
+    local lspconfig_to_package = require('mason-lspconfig.mappings').get_mason_map().lspconfig_to_package
+
     for i = 1, package_list_length do
-        table.insert(nvim_package_list, package_to_lspconfig[package_list[i]])
+        local lsp = package_to_lspconfig[package_list[i]]
+        if lsp ~= nil then
+            table.insert(nvim_package_list, lsp)
+        else
+            logging.warn('LSP ' .. package_list[i] .. ' not found in mason registry.')
+        end
     end
+
     return nvim_package_list
 end
 
@@ -40,8 +48,17 @@ local function mason_linters_to_nvim_linters(package_list)
     local package_list_length = #package_list
     local nvim_package_list = {}
 
+    -- needs to be after mason setup
+    local package_to_nvimlint = require('mason-nvim-lint.mapping').package_to_nvimlint
+
     for i = 1, package_list_length do
-        table.insert(nvim_package_list, package_to_nvimlint[package_list[i]])
+        local linter = package_to_nvimlint[package_list[i]]
+
+        if linter ~= nil then
+            table.insert(nvim_package_list, package_to_nvimlint[package_list[i]])
+        else
+            logging.warn('Linter ' .. package_list[i] .. ' not found in mason registry.')
+        end
     end
     return nvim_package_list
 end
@@ -148,6 +165,7 @@ local mason_config = {
     mason_linters = {
         -- a
         'ansible-lint',
+        'buf',
         -- b
         -- c
         'checkmake',
@@ -177,7 +195,6 @@ local mason_config = {
         -- o
         -- p
         'phpcs',
-        'protolint',
         -- q
         -- r
         -- s
@@ -224,7 +241,7 @@ local mason_config = {
         -- o
         -- p
         php = { 'phpcs' },
-        proto = { 'protolint' },
+        proto = { 'buf' },
         py = { 'flake8' },
         -- q
         -- r
@@ -251,33 +268,16 @@ local mason_config = {
 }
 
 local function setup_lsps()
+    -- These absolutely need to be called after mason has been setup, otherwise, the table is not valid
+    local package_to_lspconfig = require('mason-lspconfig.mappings').get_mason_map().package_to_lspconfig
+    
     -- check if the buf_ls has been updated and we can ad it back to the list
     if package_to_lspconfig['buf-language-server'] == 'buf_ls' then
         logging.error('PLEASE PUT buf-language-server BACK IN ensure_installed')
     end
 
     -- configure the LSPs (language server protocol)
-    mason_lspconfig.setup({
-        ensure_installed = mason_config.nvim_lsps,
-        automatic_installation = false,
-        handlers = {
-            function(server_name)
-                local setup_params = {}
-                if lspconfig_to_package[server_name] == 'lua-language-server' then
-                    setup_params = {
-                        settings = {
-                            Lua = {
-                                diagnostics = {
-                                    globals = { 'vim' },
-                                },
-                            },
-                        },
-                    }
-                end
-                require('lspconfig')[server_name].setup(setup_params)
-            end,
-        },
-    })
+    mason_lspconfig.setup({ ensure_installed = mason_config.nvim_lsps })
 end
 
 local function setup_daps()
@@ -302,19 +302,25 @@ end
 
 local function setup_linters()
     mason_lint.setup({
-        ensure_installed = mason_config.mason_linters,
+        ensure_installed = mason_config.nvim_linters,
         automatic_installation = false,
     })
 
     -- TODO: make templates for all important language configurations
     nvim_lint.linters_by_ft = mason_config.linters_by_ft
 
+    -- needs to be called after mason setup
+    local package_to_nvimlint = require('mason-nvim-lint.mapping').package_to_nvimlint
+
     for linter_by_ft_name, _ in pairs(nvim_lint.linters_by_ft) do
         table.insert(nvim_lint.linters_by_ft[linter_by_ft_name], 'codespell')
 
         for i, _ in ipairs(nvim_lint.linters_by_ft[linter_by_ft_name]) do
-            nvim_lint.linters_by_ft[linter_by_ft_name][i] =
-                package_to_nvimlint[nvim_lint.linters_by_ft[linter_by_ft_name][i]]
+            local linter =  package_to_nvimlint[nvim_lint.linters_by_ft[linter_by_ft_name][i]]
+
+            if linter ~= nil then
+                nvim_lint.linters_by_ft[linter_by_ft_name][i] = linter
+            end                
         end
     end
 
@@ -331,7 +337,7 @@ local function setup_linters()
             linter.ignore_exitcode = false
             nb_found = nb_found + 1
         else
-            error(linter_name .. ' not found ...')
+            logging.warn('Linter ' .. linter_name .. ' not found ...')
         end
     end
 
@@ -460,17 +466,21 @@ local function setup_formatters()
 end
 
 local function init()
+    -- setup mason package manager
+    mason.setup({})
+
     -- convert the packages to nvim compatible names
     mason_config.nvim_lsps = mason_lsps_to_nvim_lsps(mason_config.mason_lsps)
     mason_config.nvim_daps = mason_daps_to_nvim_daps(mason_config.mason_daps)
     mason_config.nvim_linters = mason_linters_to_nvim_linters(mason_config.mason_linters)
-    -- setup mason package manager
-    mason.setup({})
 
     setup_lsps()
     setup_daps()
     setup_linters()
     setup_formatters()
+    
+    -- vim.cmd.MasonInstall('cortex-debug') -- BUG: somehow this has to be installed from mason directly
+    -- vim.cmd.MasonUpdate()
 end
 
 local function set_options() end
@@ -484,8 +494,5 @@ function mason_config.setup()
     set_options()
     set_remaps()
 end
-
--- vim.cmd.MasonInstall('cortex-debug') -- BUG: somehow this has to be installed from mason directly
--- vim.cmd.MasonUpdate()
 
 return mason_config

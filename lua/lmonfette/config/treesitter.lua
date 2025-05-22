@@ -107,9 +107,8 @@ local function init()
             -- Instead of true it can also be a list of languages
             additional_vim_regex_highlighting = false,
         },
+        build = ":TSUpdate",
     })
-
-    vim.cmd.TSUpdate()
 end
 
 local function set_options()

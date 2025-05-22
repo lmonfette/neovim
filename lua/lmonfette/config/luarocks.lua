@@ -2,6 +2,7 @@ local utils = require('lmonfette/utils')
 local luarocks_config = {}
 
 local function init()
+    require("luarocks-nvim").setup()
     utils.luarocks_install('luafilesystem', 'lfs') -- lfs
 end
 

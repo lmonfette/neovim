@@ -9,7 +9,7 @@ local lazy_fs_stat = (vim.uv or vim.loop).fs_stat(lazy_path) -- check that lazy 
 -- if lazy is not installed, install it
 if not lazy_fs_stat then
     local lazy_url = 'https://github.com/folke/lazy.nvim.git'
-    local out = vim.fn.system({ 'git', 'clone', '--filter=blob:none', '--branch=main', lazy_url, lazy_path }) -- clone lazy locally
+    local out = vim.fn.system({ 'git', 'clone', '--filter=blob:none', '--branch=stable', lazy_url, lazy_path }) -- clone lazy locally
 
     -- error handling
     if vim.v.shell_error ~= 0 then
@@ -45,6 +45,10 @@ local setup_params = {
     install = { colorscheme = { 'extended-horizon' } },
     -- automatically check for plugin updates
     checker = { enabled = true },
+    -- {
+    --     "nvim-treesitter/nvim-treesitter",
+    --     build = ":TSUpdate"
+    -- }
 }
 
 -- Setup lazy.nvim

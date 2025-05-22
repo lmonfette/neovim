@@ -66,6 +66,7 @@ local function set_remaps()
     end, { desc = 'Telescope live grep' }) -- find a file by greping in it
     vim.keymap.set('n', '<leader>fb', builtin.buffers, { desc = 'Telescope buffers' }) -- find a file from the opened buffers
     vim.keymap.set('n', '<leader>fh', builtin.help_tags, { desc = 'Telescope help tags' }) -- find a help menu
+    vim.keymap.set('n', '<leader>]', builtin.grep_string, { desc = 'Telescope LSP references' })
 end
 
 function telescope_config.setup()

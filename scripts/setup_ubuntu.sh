@@ -6,6 +6,13 @@ sudo apt upgrade -y
 
 echo "Install nerd fonts: https://medium.com/@almatins/install-nerdfont-or-any-fonts-using-the-command-line-in-debian-or-other-linux-f3067918a88c"
 
+# install neovim
+curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.tar.gz
+sudo rm -rf /opt/nvim
+sudo tar -C /opt -xzf nvim-linux-x86_64.tar.gz
+
+rm nvim-linux-x86_64.tar.gz
+
 # install git
 sudo apt install -y git
 
@@ -86,3 +93,7 @@ sudo apt install -y kitty
 
 # make neovim the git commit ediot by default
 git config --global core.editor "nvim"
+
+# install everything needed for sway (tiling window manager)
+sudo apt install -y alacritty light sway swaybg swayidle swayimg swaylock waybar wofi fonts-font-awesome
+sudo apt install -y xdg-desktop-portal-wlr pipewire wireplumber
