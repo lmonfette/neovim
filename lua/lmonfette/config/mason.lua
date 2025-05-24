@@ -399,6 +399,11 @@ local function setup_formatters()
                     }
                 end,
             },
+            go = {
+                -- 'formatter.filetypes.lua' defines default configurations for the
+                -- 'lua' filetype
+                require('formatter.filetypes.go').goimports,
+            },
             cpp = {
                 require('formatter.filetypes.c').clangformat,
                 function()
