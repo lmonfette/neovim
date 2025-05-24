@@ -1,0 +1,4 @@
+- verify that function declarationa and definition taking void are marked with void
+- make sure defines or macro definitions blocks have a blank line under
+- make sure variable definition blocks have a blank line under
+- run the "formatter" on all the in certain directories instead of have to to it on all of them

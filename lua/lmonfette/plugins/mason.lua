@@ -2,8 +2,7 @@ return {
 	url = 'https://github.com/williamboman/mason.nvim.git',
 	dependencies = {
 		-- registry for mason to install packages from
-		-- requires nvim-lspconfig - is imported in lspzero.lua
-		{ url = 'https://github.com/mason-org/mason-registry.git' },
+		{ url = 'https://github.com/neovim/nvim-lspconfig.git' },
 		-- package to manage language servers
 		{ url = 'https://github.com/williamboman/mason-lspconfig.nvim.git' },
 		-- package to manage DAPs (debug adapter protocol)

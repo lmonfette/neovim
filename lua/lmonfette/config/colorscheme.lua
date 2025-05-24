@@ -12,11 +12,9 @@ local function init()
     ColorTheCode('horizon-extended')
 end
 
-local function set_options()
-end
+local function set_options() end
 
-local function set_remaps()
-end
+local function set_remaps() end
 
 function colorscheme_config.setup()
     init()

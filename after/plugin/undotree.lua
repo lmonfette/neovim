@@ -1,7 +1,7 @@
--- setup undotree
+-- setup harpoon
 local logging = require('lmonfette/logging')
-logging.debug('after/plugin/undotree.lua')
+logging.debug('after/plugin/harpoon.lua')
 
-local undotree_config = require('lmonfette/config/undotree')
+local harpoon_config = require('lmonfette/config/harpoon')
 
-undotree_config.setup()
+harpoon_config.setup()

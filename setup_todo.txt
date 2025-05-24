@@ -20,3 +20,4 @@
 15. tmux
 16. alacritty
 17. use stow to manage dotfiles
+18. I want a "viw" or "ciw" but for a function parameter

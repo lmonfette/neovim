@@ -82,13 +82,13 @@ local treesitter_config = {
         -- y
         'yaml',
         -- z
-    }
+    },
 }
 
 local function init()
     utils.system_ensure_installed('tree-sitter')
 
-    nvim_ts_configs.setup {
+    nvim_ts_configs.setup({
         -- A list of parser names, or 'all' (the listed parsers MUST always be installed)
         ensure_installed = treesitter_config.languages,
         -- Install parsers synchronously (only applied to `ensure_installed`)
@@ -107,16 +107,17 @@ local function init()
             -- Instead of true it can also be a list of languages
             additional_vim_regex_highlighting = false,
         },
-    }
-
-    vim.cmd.TSUpdate()
+        build = ":TSUpdate",
+    })
 end
 
 local function set_options()
+    vim.o.foldmethod = 'expr'
+    vim.o.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
+    vim.o.foldlevel = 99
 end
 
-local function set_remaps()
-end
+local function set_remaps() end
 
 function treesitter_config.setup()
     init()
