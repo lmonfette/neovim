@@ -20,6 +20,7 @@ end
 
 function utils_module.luarocks_install(package_name, require_name)
     local lua_numerical_version = utils_module.split(state.lua_version, ' ')[2] -- Lua 5.1 (example)
+    lua_numerical_version = "5.1"
 
     local has_package, _ = pcall(require, require_name)
     if not has_package then

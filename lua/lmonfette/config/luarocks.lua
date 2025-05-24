@@ -3,7 +3,7 @@ local luarocks_config = {}
 
 local function init()
     require("luarocks-nvim").setup()
-    utils.luarocks_install('luafilesystem', 'lfs') -- lfs
+    -- utils.luarocks_install('luafilesystem', 'lfs') -- lfs
 end
 
 local function set_options()

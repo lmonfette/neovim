@@ -164,11 +164,9 @@ local mason_config = {
     nvim_daps = {}, -- defined in setup function
     mason_linters = {
         -- a
-        'ansible-lint',
         'buf',
         -- b
         -- c
-        'checkmake',
         'cmakelint',
         'codespell',
         'cpplint',
@@ -188,7 +186,6 @@ local mason_config = {
         'jsonlint',
         -- k
         -- l
-        'luacheck',
         -- m
         'markdownlint',
         -- n
@@ -198,6 +195,7 @@ local mason_config = {
         -- q
         -- r
         -- s
+        'selene',
         'shellcheck',
         'sqlfluff',
         -- t
@@ -233,7 +231,7 @@ local mason_config = {
         jsx = { 'eslint_d' },
         -- k
         -- l
-        lua = { 'luacheck' },
+        lua = { 'selene' },
         -- m
         make = { 'checkmake' },
         markdown = { 'markdownlint' },
