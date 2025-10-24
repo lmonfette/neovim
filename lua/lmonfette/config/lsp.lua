@@ -24,6 +24,8 @@ local function init()
             vim.keymap.set('n', '<F2>', '<cmd>lua vim.lsp.buf.rename()<cr>', opts)
             vim.keymap.set({ 'n', 'x' }, '<F3>', '<cmd>lua vim.lsp.buf.format({async = true})<cr>', opts)
             vim.keymap.set('n', '<F4>', '<cmd>lua vim.lsp.buf.code_action()<cr>', opts)
+            vim.keymap.set('n', '<leader>od', '<cmd>lua vim.diagnostic.open_float()<cr>', opts)
+            vim.keymap.set('n', '<leader>cd', '<cmd>lua vim.diagnostic.hide()<cr>', opts)
         end,
     })
 

@@ -11,6 +11,8 @@ vim.g.maplocalleader = '\\'
 
 vim.o.wrap = false
 vim.o.scrolloff = 15
+vim.o.mousescroll="ver:1,hor:2"
+vim.o.scroll=12
 
 -- please install nerd fonts on you computer: https://github.com/ryanoasis/nerd-fonts.git
 
